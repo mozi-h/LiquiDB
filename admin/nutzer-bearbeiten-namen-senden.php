@@ -28,8 +28,8 @@
   // - 4-32 lang
   // - noch nicht verwendet
   $skip_username = False;
-  $_POST["username"] = strtolower(trim($_POST["username"] ?? ""));
-  if($_POST["username"] == strtolower($user["username"])) {
+  $_POST["username"] = trim($_POST["username"] ?? "");
+  if($_POST["username"] == $user["username"]) {
     // Nutzername nicht geändert
     $skip_username = True;
     unset($_POST["username"]);
@@ -48,8 +48,9 @@
   }
   else {
     $query = sprintf(
-      "SELECT 1 FROM user WHERE LOWER(username) = '%s'",
-      mysqli_real_escape_string($db, $_POST["username"])
+      "SELECT 1 FROM user WHERE LOWER(username) = '%s' AND id != %d",
+      mysqli_real_escape_string($db, $_POST["username"]),
+      $user["id"]
     );
     $result = mysqli_query($db, $query);
 
