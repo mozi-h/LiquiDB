@@ -18,7 +18,7 @@
 <body>
   <?= get_nav("admin") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-badge"> Benutzer</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account"> Benutzer</h1>
 
     <?= catch_alert() ?>
     <table class="table table-striped text-center" id="datatable">

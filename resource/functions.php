@@ -93,7 +93,7 @@
    * Standart: $singular . "s"
    */
   function get_quantity($number, string $singular, string $plural = NULL): string {
-    if($number < -1 | $number > 1) {
+    if($number == -1 | $number == 1) {
       return $singular;
     }
     if(!$plural) {
