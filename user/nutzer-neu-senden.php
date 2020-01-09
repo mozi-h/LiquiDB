@@ -74,15 +74,14 @@
 
   // Salt generieren, Passwort hashen
   $salt = random_str(32);
-  $mixed_pw = substr($salt, 0, 16) . $_POST["pw"] . substr($salt, 16);
-  $pw_hash = strtoupper(hash("sha256", $mixed_pw));
+  $pw_hash = hash_password($salt, $_POST["pw"]);
   // Eintrag in die Datenbank tun
   $query = sprintf(
-    "INSERT INTO user(username, name, salt, pw_hash_bin, ist_trainer, ist_admin) VALUE ('%s', %s, '%s', UNHEX('%s'), %d, %d)",
+    "INSERT INTO user(username, name, salt, pw_hash, ist_trainer, ist_admin) VALUE ('%s', %s, '%s', '%s', %d, %d)",
     mysqli_real_escape_string($db, $_POST["username"]),
     (isset($_POST["name"]) ? "'" . mysqli_real_escape_string($db, $_POST["name"]) . "'" : "NULL"), // Anzeigename bzw. NULL
     mysqli_real_escape_string($db, $salt),
-    mysqli_real_escape_string($db, $pw_hash),
+    $pw_hash,
     isset($_POST["ist_trainer"]),
     isset($_POST["ist_admin"])
   );

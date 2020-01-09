@@ -44,11 +44,10 @@
 
   // Passwort und pw_changed zurücksetzen
   $salt = random_str(32);
-  $mixed_pw_neu = substr($salt, 0, 16) . $_POST["pw"] . substr($salt, 16);
-  $pw_hash = strtoupper(hash("sha256", $mixed_pw_neu));
+  $pw_hash = hash_password($salt, $_POST["pw"]);
 
   $query = sprintf(
-    "UPDATE user SET salt = '%s', pw_hash_bin = UNHEX('%s'), pw_changed = NOW() WHERE id = %d",
+    "UPDATE user SET salt = '%s', pw_hash = '%s', pw_changed = NOW(), pw_must_change = 1 WHERE id = %d",
     mysqli_real_escape_string($db, $salt),
     $pw_hash,
     $user["id"]

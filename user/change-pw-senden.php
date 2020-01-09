@@ -41,19 +41,17 @@
 
   // Nutzer holen, Passwort kontrollieren
   $user = get_user($_SESSION["USER"]);
-  $mixed_pw_alt = substr($user["salt"], 0, 16) . $_POST["pw-alt"] . substr($user["salt"], 16);
-  if(strtoupper(hash("sha256", $mixed_pw_alt)) !== $user["pw_hash"]) {
+  if(hash_password($user["salt"], $_POST["pw-alt"]) !== $user["pw_hash"]) {
     // Passwort (alt) falsch
     send_alert($target, "danger", "Passwort (alt) falsch");
   }
   else {
     // Passwort (alt) korrekt - neues setzen
     $salt = random_str(32);
-    $mixed_pw_neu = substr($salt, 0, 16) . $_POST["pw-neu"] . substr($salt, 16);
-    $pw_hash = strtoupper(hash("sha256", $mixed_pw_neu));
+    $pw_hash = hash_password($salt, $_POST["pw-neu"]);
 
     $query = sprintf(
-      "UPDATE user SET salt = '%s', pw_hash_bin = UNHEX('%s'), pw_changed = NOW(), pw_must_change = 0 WHERE id = %d",
+      "UPDATE user SET salt = '%s', pw_hash = '%s', pw_changed = NOW(), pw_must_change = 0 WHERE id = %d",
       mysqli_real_escape_string($db, $salt),
       $pw_hash,
       $user["id"]

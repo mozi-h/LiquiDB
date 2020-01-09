@@ -49,7 +49,7 @@
   // Nutzer-Passwort-Bindung korrekt?
   // Nutzer vorhanden?
   $query = sprintf(
-    "SELECT id, username, salt, HEX(pw_hash_bin) AS pw_hash FROM user WHERE LOWER(username) = '%s'",
+    "SELECT id, username, salt, pw_hash FROM user WHERE LOWER(username) = '%s'",
     mysqli_real_escape_string($db, $_POST["username"])
   );
   $result = mysqli_query($db, $query);
@@ -64,8 +64,7 @@
   else {
     // Nutzer gefunden, Passwort kontrollieren
     $user = mysqli_fetch_array($result);
-    $mixed_pw = substr($user["salt"], 0, 16) . $_POST["pw"] . substr($user["salt"], 16);
-    if(strtoupper(hash("sha256", $mixed_pw)) !== $user["pw_hash"]) {
+    if(hash_password($user["salt"], $_POST["pw"]) !== $user["pw_hash"]) {
       // Passwort falsch
       send_alert($target, "danger", "Nutzername oder Passwort falsch");
     }

@@ -35,7 +35,7 @@
   function get_user(int $id): array {
     global $db;
     $query = sprintf(
-      "SELECT *, HEX(pw_hash_bin) AS pw_hash FROM user WHERE id = %d",
+      "SELECT *, pw_hash AS pw_hash FROM user WHERE id = %d",
       $id
     );
     $result = mysqli_query($db, $query);
@@ -159,7 +159,7 @@
     }
     $user = get_user($_SESSION["USER"]);
     if($user["pw_must_change"]) {
-      send_alert(RELPATH . "index.php", "warning", "Sie müssen zuerst Ihr <a href='" . RELPATH . "user/change-data.php'>Passwort ändern</a>", True);
+      send_alert(RELPATH . "index.php", "warning", "Sie müssen zuerst Ihr <a href='user/change-data.php'>Passwort ändern</a>", True);
     }
     if($rolle !== NULL) {
       if(!$user["ist_" . strtolower($rolle)]) {
@@ -179,9 +179,8 @@
    * @link https://stackoverflow.com/questions/4356289/php-random-string-generator/31107425#31107425
    */
   function random_str(
-    // Quelle: 
     int $length = 64,
-    string $keyspace = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!§$%&/()=?{[]}*+~'\"\\#-_.:,;<>|@€"
+    string $keyspace = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!§$%&/()=?{[]}*+~ #-_.:,;<>|"
   ): string {
     if ($length < 1) {
       throw new \RangeException("Length must be a positive integer");
@@ -192,5 +191,19 @@
       $pieces []= $keyspace[random_int(0, $max)];
     }
     return implode("", $pieces);
+  }
+
+  /**
+   * Gibt den Hash des Passwortes (mit Salt) zurück.
+   *
+   * @param string $salt Zuzufügendes Salt.
+   * @param string $password Das zu hashende Passwort.
+   * @param string $algo Der zu verwendende Hash-Algorithmus.
+   *
+   * @return string Hash.
+   */
+  function hash_password(string $salt, string $password, string $algo = "sha256"): string {
+    $mixed_password = $salt . $password;
+    return strtoupper(hash($algo, $mixed_password));
   }
 ?>
