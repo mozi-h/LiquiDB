@@ -114,26 +114,25 @@
    * @param bool $allow_html Ob HTML aufgelöst werden soll.
    */
   function send_alert(string $target, string $type, string $content, bool $allow_html = False): void {
-    $content = filter_var($content, FILTER_SANITIZE_SPECIAL_CHARS);
-    if($allow_html == False) {
-      $content = filter_var($content, FILTER_SANITIZE_SPECIAL_CHARS);
-    }
-    ?>
-    <form id='send_alert' action='<?= $target ?>' method='post'>
-      <input type='text' name='alert[type]' value='<?= $type ?>' hidden>
-      <input type='text' name='alert[content]' value='<?= $content ?>' hidden>
-    </form>
-    <script>
-      document.getElementById('send_alert').submit();
-    </script>
-    <?php
+    $_SESSION["alert"] = [
+      "type" => $type,
+      "content" => $content,
+      "allow_html" => $allow_html
+    ];
+    header("Status: 200");
+    header("Location: $target");
     die();
   }
 
   /** Löst sich ggf. in ein einkommendes Alert-Banner auf. */
   function catch_alert(): void {
-    if(isset($_POST["alert"])) {
-      $alert = $_POST["alert"];
+    if(isset($_SESSION["alert"])) {
+      $alert = $_SESSION["alert"];
+      unset($_SESSION["alert"]);
+
+      if(!$alert["allow_html"]) {
+        $alert["content"] = filter_var($alert["content"] ?? "", FILTER_SANITIZE_SPECIAL_CHARS);
+      }
       ?>
       <div class="alert alert-<?= $alert["type"] ?? "info" ?> alert-dismissible fade show" role="alert">
         <?= $alert["content"] ?? "Kein Inhalt im Alert." ?>
