@@ -2,11 +2,11 @@
   /**
    * HTML-Putzt eine Einage
    * 
-   * @param string $to_escape
+   * @param mixed $to_escape
    * 
    * @return string Gesäuberte Ausgabe.
    */
-  function escape(string $to_escape): ?string {
+  function escape($to_escape): ?string {
     if(!$to_escape) {
       return NULL;
     }
@@ -55,13 +55,13 @@
   /** Löst sich zu Tags für <head> auf. */
   function get_head(): void {
     global $relative_offset;
-    require("resource/head.php");
+    require("head.php");
   }
 
   /** Löst sich zur Script-Include Liste auf. */
   function get_foot(): void {
     global $relative_offset;
-    require("resource/foot.php");
+    require("foot.php");
   }
 
   /**
@@ -72,7 +72,7 @@
   function get_nav(string $aktiver_tab): void {
     global $db, $relative_offset;
     $tab[$aktiver_tab] = "active";
-    require("resource/nav.php");
+    require("nav.php");
   }
 
   /**
