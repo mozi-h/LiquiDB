@@ -28,8 +28,8 @@
   // - 4-32 lang
   // - noch nicht verwendet
   $skip_username = False;
-  $_POST["username"] = strtolower(trim($_POST["username"] ?? ""));
-  if($_POST["username"] == strtolower($user["username"])) {
+  $_POST["username"] = trim($_POST["username"] ?? "");
+  if($_POST["username"] == $user["username"]) {
     // Nutzername nicht geändert
     $skip_username = True;
     unset($_POST["username"]);
