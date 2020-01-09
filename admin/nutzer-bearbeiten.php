@@ -4,10 +4,13 @@
 
   restricted("Admin");
 
+  /** Ziel für Alerts */
+  $target = RELPATH . "admin/nutzer-bearbeiten.php?id=";
+
   // Existiert der Nutzer?
   if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
     // id keine Nummer
-    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist keine Nummer");
+    send_alert($target, "warning", "ID ist keine Nummer");
   }
   $_GET["id"] = intval($_GET["id"]);
   $query = sprintf(
@@ -17,7 +20,7 @@
   $result = mysqli_query($db, $query);
   if(mysqli_num_rows($result) != 1) {
     // id kein Nutzer
-    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
+    send_alert($target, "warning", "ID ist kein Nutzer");
   }
   $user = get_user($_GET["id"]);
 ?>
