@@ -24,23 +24,35 @@
   }
   $user = get_user($_GET["id"]);
 
-  // Passwort validieren
+  // Alle Passwörter validieren
   // - Gegeben
-  // - 8-200 lang
-  $_POST["pw"] = trim($_POST["pw"] ?? "");
-  if(empty($_POST["pw"])) {
+  // - 8-200 Lang
+  $passwoerter = [
+    "Passwort (eigenes)" => "pw-admin",
+    "Passwort (neu)" => "pw"
+  ];
+  foreach($passwoerter as $key => $value)
+  $_POST[$value] = trim($_POST[$value] ?? "");
+  if(empty($_POST[$value])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($target . $user["id"], "warning", "Kein Passwort gegeben");
+    send_alert($target . $user["id"], "warning", "Kein $key gegeben");
   }
-  elseif(strlen($_POST["pw"]) < 4) {
+  elseif(strlen($_POST[$value]) < 4) {
     // Zu kurz
-    send_alert($target . $user["id"], "warning", "Passwort zu kurz (min 8 Zeichen)");
+    send_alert($target . $user["id"], "warning", "$key zu kurz (min 8 Zeichen)");
   }
-  elseif(strlen($_POST["pw"]) > 32) {
+  elseif(strlen($_POST[$value]) > 32) {
     // Zu lang
-    send_alert($target . $user["id"], "warning", "Passwort zu lang (max 200 Zeichen)");
+    send_alert($target . $user["id"], "warning", "$key zu lang (max 200 Zeichen)");
   }
-  // Passwort valid
+  // Passwörter valid
+
+  // Admin-Passwort kontrollieren
+  $user_admin = get_user($_SESSION["USER"]);
+  if(hash_password($user_admin["salt"], $_POST["pw-admin"]) !== $user_admin["pw_hash"]) {
+    // Admin-Passwort falsch
+    send_alert($target . $user["id"], "danger", "Passwort (eigenes) falsch");
+  }
 
   // Passwort und pw_changed zurücksetzen
   $salt = random_str(32);

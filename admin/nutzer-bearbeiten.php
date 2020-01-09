@@ -55,6 +55,7 @@
       </div>
       <div class="card-body">
         <form class="form-inline" method="post" action="<?= RELPATH ?>admin/nutzer-bearbeiten-pw-senden.php?id=<?= $user["id"] ?>">
+          <input type="password" class="form-control mb-2 mr-sm-2" required minlength=8 maxlength=200 name="pw-admin" placeholder="Eigenes Passwort">
           <div class="input-group  mb-2 mr-sm-2">
             <input type="text" autocomplete="off" class="form-control" required minlength=8 maxlength=200 name="pw" id="pw" placeholder="Passwort setzen">
             <div class="input-group-append">
