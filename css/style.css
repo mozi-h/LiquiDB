@@ -14,3 +14,10 @@
   color: white;
   background-color: rgb(0, 153, 255);
 }
+@media (max-width: 800px) {
+  html.zoom-on {
+    width: 50%;
+    transform: scale(2);
+    transform-origin: 0 0;
+  }
+}
