@@ -1,0 +1,16 @@
+.nav-custom {
+  background-color: rgb(0, 204, 255);
+}
+.nav .navbar-brand {
+  background-color: rgb(238, 238, 238);
+}
+.nav .nav-link {
+  background-color: rgb(238, 238, 238);
+}
+.nav .nav-link.disabled {
+  background-color: rgb(226, 226, 226);
+}
+.nav .nav-link.active {
+  color: white;
+  background-color: rgb(0, 153, 255);
+}

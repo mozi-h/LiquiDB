@@ -1,0 +1,81 @@
+<?php
+  $relative_offset = "../";
+  require_once($relative_offset . "config.php");
+
+  restricted("Admin");
+
+  // Existiert der Nutzer?
+  if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
+    // id keine Nummer
+    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist keine Nummer");
+  }
+  $_GET["id"] = intval($_GET["id"]);
+  $query = sprintf(
+    "SELECT 1 FROM user WHERE id = %d",
+    $_GET["id"]
+  );
+  $result = mysqli_query($db, $query);
+  if(mysqli_num_rows($result) != 1) {
+    // id kein Nutzer
+    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
+  }
+  $user = get_user($_GET["id"]);
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <?= get_head() ?>
+  
+  <title>Nutzer bearbeiten | LiquiDB</title>
+</head>
+<body>
+  <?= get_nav("admin") ?>
+  <div class="container">
+    <h1 class="text-info display-4 text-center mdi mdi-account-edit"> Nutzer bearbeiten</h1>
+
+    <?= catch_alert() ?>
+    <div class="card mb-3">
+      <div class="card-header">
+        Namen ändern
+      </div>
+      <div class="card-body">
+        <form class="form-inline" method="post" action="<?= $relative_offset ?>admin/nutzer-bearbeiten-namen-senden.php?id=<?= $user["id"] ?>">
+          <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 name="username" placeholder="Nutzername" value="<?= $user["username_esc"] ?>">
+          <input type="text" class="form-control mb-2 mr-sm-2" maxlength=50 name="name" placeholder="Anzeigename (optional)" value="<?= $user["name_esc"] ?? "" ?>">
+          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        Passwort ändern
+      </div>
+      <div class="card-body">
+        <form class="form-inline" method="post" action="<?= $relative_offset ?>admin/nutzer-bearbeiten-pw-senden.php?id=<?= $user["id"] ?>">
+          <div class="input-group  mb-2 mr-sm-2">
+            <input type="text" class="form-control" required minlength=8 maxlength=200 name="pw" id="pw" placeholder="Passwort setzen">
+            <div class="input-group-append">
+              <button class="btn btn-info" type="button" data-toggle="tooltip" data-placement="top" title="Zufall" onclick="random_password()"><span class="mdi mdi-dice-multiple"></span></button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+        </form>
+        <span class="text-muted">Der Benutzer wird abgemeldet und bei erneutem Anmelden aufgefordert, sein Passwort zu ändern.</span>
+      </div>
+    </div>
+    </div>
+  
+  <?= get_foot() ?>
+  <script>
+    // Tooltips aktivieren
+    $(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function random_password() {
+      var rand_pw = Math.random().toString(36).substr(2, 12);
+      $("#pw").val(rand_pw);
+    }
+  </script>
+</body>
+</html>
