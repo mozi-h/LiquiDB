@@ -1,6 +1,6 @@
 <?php
   require_once("config.php");
-  $relative_offset = "";
+  set_relpath(0);
 
   if(isset($_SESSION["USER"])) {
     $user = get_user($_SESSION["USER"]);

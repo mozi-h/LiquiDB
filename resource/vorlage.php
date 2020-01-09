@@ -1,6 +1,6 @@
 <?php
   require_once("../config.php");
-  $relative_offset = "../";
+  set_relpath(1);
 ?>
 <!DOCTYPE html>
 <html lang="de">

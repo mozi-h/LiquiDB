@@ -1,12 +1,15 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
 
   // Normalerweise restricted(); außnahme, da Sonderseite
   if(!isset($_SESSION["USER"])) {
     send_alert("../index.php", "info", "Sie müssen sich zuerst anmelden");
   }
   $user = get_user($_SESSION["USER"]);
+
+  /** Ziel für Alerts */
+  $target = RELPATH . "user/change-data.php";
 
   // Nutzername validieren, WENN
   // - Nutzername geändert
@@ -23,15 +26,15 @@
   }
   elseif(empty($_POST["username"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($relative_offset . "user/change-data.php", "warning", "Kein Nutzername gegeben");
+    send_alert($target, "warning", "Kein Nutzername gegeben");
   }
   elseif(strlen($_POST["username"]) < 4) {
     // Zu kurz
-    send_alert($relative_offset . "user/change-data.php", "warning", "Nutzername zu kurz (min 4 Zeichen)");
+    send_alert($target, "warning", "Nutzername zu kurz (min 4 Zeichen)");
   }
   elseif(strlen($_POST["username"]) > 32) {
     // Zu lang
-    send_alert($relative_offset . "user/change-data.php", "warning", "Nutzername zu lang (max 32 Zeichen)");
+    send_alert($target, "warning", "Nutzername zu lang (max 32 Zeichen)");
   }
   else {
     $query = sprintf(
@@ -42,7 +45,7 @@
 
     if(mysqli_num_rows($result) != 0) {
       // Nutzername bereits benutzt
-      send_alert($relative_offset . "user/change-data.php", "info", "Nutzername bereits vergeben");
+      send_alert($target, "info", "Nutzername bereits vergeben");
     }
     // Nutzername valid
   }
@@ -65,14 +68,14 @@
   }
   elseif(strlen($_POST["name"]) > 50) {
     // Zu lang
-    send_alert($relative_offset . "user/change-data.php", "warning", "Anzeigename zu lang (max 50 Zeichen)");
+    send_alert($target, "warning", "Anzeigename zu lang (max 50 Zeichen)");
   }
   // Name gegeben und valid
   
   // Eintrag in der Datenbank aktualisieren, wenn etwas geändert wurde
   if($skip_username & $skip_name) {
     // Nichts geändert
-    send_alert($relative_offset . "user/change-data.php", "warning", "Nichts geändert");
+    send_alert($target, "warning", "Nichts geändert");
   }
   if(!$skip_username) {
     // Nutzername aktualisieren
@@ -83,7 +86,7 @@
     );
     if(!mysqli_query($db, $query)) {
       // Fehler beim Query
-      send_alert($relative_offset . "user/change-data.php", "danger", "Fehler: " . mysqli_error($db));
+      send_alert($target, "danger", "Fehler: " . mysqli_error($db));
     }
   }
   if(!$skip_name) {
@@ -95,14 +98,14 @@
     );
     if(!mysqli_query($db, $query)) {
       // Fehler beim Query
-      send_alert($relative_offset . "user/change-data.php", "danger", "Fehler: " . mysqli_error($db));
+      send_alert($target, "danger", "Fehler: " . mysqli_error($db));
     }
   }
   if(!$skip_username & $skip_name) {
-    send_alert($relative_offset . "user/change-data.php", "success", "Nutzername aktualisiert");
+    send_alert($target, "success", "Nutzername aktualisiert");
   }
   if($skip_username & !$skip_name) {
-    send_alert($relative_offset . "user/change-data.php", "success", "Anzeigename aktualisiert");
+    send_alert($target, "success", "Anzeigename aktualisiert");
   }
-  send_alert($relative_offset . "user/change-data.php", "success", "Nutzer- und Anzeigename aktualisiert");
+  send_alert($target, "success", "Nutzer- und Anzeigename aktualisiert");
 ?>

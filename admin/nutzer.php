@@ -1,6 +1,6 @@
 <?php
   require_once("../config.php");
-  $relative_offset = "../";
+  set_relpath(1);
 
   restricted("Admin");
 
@@ -60,7 +60,7 @@
     $(document).ready(function() {
       $('#datatable').DataTable( {
         "language": {
-          url: "<?= $relative_offset ?>DataTables/german.json"
+          url: "<?= RELPATH ?>DataTables/german.json"
         },
         "order": [
           [1, "asc"]

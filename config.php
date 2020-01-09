@@ -14,11 +14,13 @@
 
   // ** Ender der Einstellungen - Hierunter nicht bearbeiten ** //
 
-  if(!defined("ABSPATH")) {
-    /** Absoluter Pfad zum LiquiDB Root-Verzeichnis */
-    define("ABSPATH", dirname(__FILE__) . "/");
-  }
-
+  /**
+   * Absoluter Pfad zum LiquiDB Root-Verzeichnis (für Dateisystem).
+   * 
+   * Für URLs, set_relpath() nutzen und RELPATH verwenden.
+   * **/
+  define("ABSPATH", dirname(__FILE__) . "/");
+  
   /** Datenbank-Verbindung */
   $db = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
   if(!$db) {

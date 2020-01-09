@@ -1,13 +1,13 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
 
   restricted("Admin");
 
   // Existiert der Nutzer?
   if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
     // id keine Nummer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist keine Nummer");
+    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist keine Nummer");
   }
   $_GET["id"] = intval($_GET["id"]);
   $query = sprintf(
@@ -17,7 +17,7 @@
   $result = mysqli_query($db, $query);
   if(mysqli_num_rows($result) != 1) {
     // id kein Nutzer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
+    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
   }
   $user = get_user($_GET["id"]);
 ?>
@@ -39,7 +39,7 @@
         Namen ändern
       </div>
       <div class="card-body">
-        <form class="form-inline" method="post" action="<?= $relative_offset ?>admin/nutzer-bearbeiten-namen-senden.php?id=<?= $user["id"] ?>">
+        <form class="form-inline" method="post" action="<?= RELPATH ?>admin/nutzer-bearbeiten-namen-senden.php?id=<?= $user["id"] ?>">
           <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 name="username" placeholder="Nutzername" value="<?= $user["username_esc"] ?>">
           <input type="text" class="form-control mb-2 mr-sm-2" maxlength=50 name="name" placeholder="Anzeigename (optional)" value="<?= $user["name_esc"] ?? "" ?>">
           <button type="submit" class="btn btn-primary mb-2">Ändern</button>
@@ -51,7 +51,7 @@
         Passwort ändern
       </div>
       <div class="card-body">
-        <form class="form-inline" method="post" action="<?= $relative_offset ?>admin/nutzer-bearbeiten-pw-senden.php?id=<?= $user["id"] ?>">
+        <form class="form-inline" method="post" action="<?= RELPATH ?>admin/nutzer-bearbeiten-pw-senden.php?id=<?= $user["id"] ?>">
           <div class="input-group  mb-2 mr-sm-2">
             <input type="text" class="form-control" required minlength=8 maxlength=200 name="pw" id="pw" placeholder="Passwort setzen">
             <div class="input-group-append">

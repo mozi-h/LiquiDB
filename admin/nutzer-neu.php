@@ -1,6 +1,6 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
 
   restricted("Admin");
 
@@ -28,7 +28,7 @@
         Neuer Benutzer
       </div-->
       <div class="card-body">
-        <form id="nutzer-neu" class="form-inline" method="post" action="<?= $relative_offset ?>user/nutzer-neu-senden.php">
+        <form id="nutzer-neu" class="form-inline" method="post" action="<?= RELPATH ?>user/nutzer-neu-senden.php">
           <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 id="username" name="username" placeholder="Nutzername">
           <input type="text" class="form-control mb-2 mr-sm-2" maxlength=50 id="name" name="name" placeholder="Anzeigename (optional)">
           <div class="input-group  mb-2 mr-sm-2">

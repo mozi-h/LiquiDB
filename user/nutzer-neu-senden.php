@@ -1,8 +1,11 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
 
   restricted("Admin");
+
+  /** Ziel für Alerts */
+  $target = RELPATH . "admin/nutzer-neu.php";
 
   // Nutzername validieren
   // Groß- / Kleinschreibung egal
@@ -12,15 +15,15 @@
   $_POST["username"] = strtolower(trim($_POST["username"] ?? ""));
   if(empty($_POST["username"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Kein Nutzername gegeben");
+    send_alert($target, "warning", "Kein Nutzername gegeben");
   }
   elseif(strlen($_POST["username"]) < 4) {
     // Zu kurz
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Nutzername zu kurz (min 4 Zeichen)");
+    send_alert($target, "warning", "Nutzername zu kurz (min 4 Zeichen)");
   }
   elseif(strlen($_POST["username"]) > 32) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Nutzername zu lang (max 32 Zeichen)");
+    send_alert($target, "warning", "Nutzername zu lang (max 32 Zeichen)");
   }
   else {
     $query = sprintf(
@@ -31,7 +34,7 @@
 
     if(mysqli_num_rows($result) != 0) {
       // Nutzername bereits benutzt
-      send_alert($relative_offset . "admin/nutzer-neu.php", "info", "Nutzername bereits vergeben");
+      send_alert($target, "info", "Nutzername bereits vergeben");
     }
     // Nutzername valid
   }
@@ -47,7 +50,7 @@
   }
   elseif(strlen($_POST["name"]) > 50) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Anzeigename zu lang (max 50 Zeichen)");
+    send_alert($target, "warning", "Anzeigename zu lang (max 50 Zeichen)");
   }
   // Name gegeben und valid
 
@@ -57,15 +60,15 @@
   $_POST["pw"] = trim($_POST["pw"] ?? "");
   if(empty($_POST["pw"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Kein Passwort gegeben");
+    send_alert($target, "warning", "Kein Passwort gegeben");
   }
   elseif(strlen($_POST["pw"]) < 4) {
     // Zu kurz
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Passwort zu kurz (min 8 Zeichen)");
+    send_alert($target, "warning", "Passwort zu kurz (min 8 Zeichen)");
   }
   elseif(strlen($_POST["pw"]) > 32) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-neu.php", "warning", "Passwort zu lang (max 200 Zeichen)");
+    send_alert($target, "warning", "Passwort zu lang (max 200 Zeichen)");
   }
   // Passwort valid
 
@@ -85,7 +88,7 @@
   );
   if(!mysqli_query($db, $query)) {
     // Fehler beim Query
-    send_alert($relative_offset . "admin/nutzer-neu.php", "danger", "Fehler: " . mysqli_error($db));
+    send_alert($target, "danger", "Fehler: " . mysqli_error($db));
   }
-  send_alert($relative_offset . "admin/nutzer-neu.php", "success", "Benutzer hinzugefügt");
+  send_alert($target, "success", "Benutzer hinzugefügt");
 ?>

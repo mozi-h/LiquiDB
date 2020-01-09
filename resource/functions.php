@@ -14,6 +14,16 @@
   }
 
   /**
+   * Setzt die RELPATH-Konstante anhand der Verzeichnistiefe.
+   *
+   * @param int $dir_depth Anzahl der Verzeichnisse, die die derzeitige Datei vom LiquiDB-Root "entfernt" ist.
+   */
+  function set_relpath(int $dir_depth): void {
+    /** Relativer Pfad zum LiquiDB Root-Verzeichnis (für URL). */
+    define("RELPATH", str_repeat("../", $dir_depth));
+  }
+
+  /**
    * Löst Nutzer-$id zu einem Array mit dessen Daten auf.
    *
    * Überprüft außerdem, ob die Sitzung abgelaufen ist.
@@ -42,7 +52,7 @@
         // Sitzung abgelaufen
         unset($_SESSION["USER"]);
         unset($_SESSION["USER_LOGINTIME"]);
-        send_alert($relative_offset . "index.php", "info", "Ihre Sitzung ist abgelaufen, da sich ihr Passwort verändert hat.");
+        send_alert(RELPATH . "index.php", "info", "Ihre Sitzung ist abgelaufen, da sich ihr Passwort verändert hat.");
       }
     }
     $user["username_esc"] = escape($user["username"]);
@@ -54,13 +64,11 @@
 
   /** Löst sich zu Tags für <head> auf. */
   function get_head(): void {
-    global $relative_offset;
     require("head.php");
   }
 
   /** Löst sich zur Script-Include Liste auf. */
   function get_foot(): void {
-    global $relative_offset;
     require("foot.php");
   }
 
@@ -70,7 +78,6 @@
    * @param string $aktiver_tab Tab, der den active-Tag bekommt.
    * */
   function get_nav(string $aktiver_tab): void {
-    global $db, $relative_offset;
     $tab[$aktiver_tab] = "active";
     require("nav.php");
   }
@@ -147,17 +154,16 @@
   function restricted(string $rolle = NULL): void {
     // Prüft, ob Nutzer angemeldet ist und entsprechende Berechtigung besitzt
     // $rolle mit entsprechender Großschreibung. NULL für Helfer (angemeldet)
-    global $relative_offset;
     if(!isset($_SESSION["USER"])) {
-      send_alert($relative_offset . "index.php", "info", "Sie müssen sich zuerst anmelden");
+      send_alert(RELPATH . "index.php", "info", "Sie müssen sich zuerst anmelden");
     }
     $user = get_user($_SESSION["USER"]);
     if($user["pw_must_change"]) {
-      send_alert($relative_offset . "index.php", "warning", "Sie müssen zuerst Ihr <a href='" . $relative_offset . "liquidb/user/change-data.php'>Passwort ändern</a>", True);
+      send_alert(RELPATH . "index.php", "warning", "Sie müssen zuerst Ihr <a href='" . RELPATH . "user/change-data.php'>Passwort ändern</a>", True);
     }
     if($rolle !== NULL) {
       if(!$user["ist_" . strtolower($rolle)]) {
-        send_alert($relative_offset . "index.php", "warning", "Sie sind kein $rolle");
+        send_alert(RELPATH . "index.php", "warning", "Sie sind kein $rolle");
       }
     }
   }

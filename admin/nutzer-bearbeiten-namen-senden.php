@@ -1,13 +1,13 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
 
   restricted("Admin");
 
   // Existiert der Nutzer?
   if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
     // id keine Nummer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist keine Nummer");
+    send_alert(RELPATH . "admin/nutzer.php", "warning", "ID ist keine Nummer");
   }
   $_GET["id"] = intval($_GET["id"]);
   $query = sprintf(
@@ -17,7 +17,7 @@
   $result = mysqli_query($db, $query);
   if(mysqli_num_rows($result) != 1) {
     // id kein Nutzer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
+    send_alert(RELPATH . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
   }
   $user = get_user($_GET["id"]);
 
@@ -36,15 +36,15 @@
   }
   elseif(empty($_POST["username"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Kein Nutzername gegeben");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Kein Nutzername gegeben");
   }
   elseif(strlen($_POST["username"]) < 4) {
     // Zu kurz
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nutzername zu kurz (min 4 Zeichen)");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nutzername zu kurz (min 4 Zeichen)");
   }
   elseif(strlen($_POST["username"]) > 32) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nutzername zu lang (max 32 Zeichen)");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nutzername zu lang (max 32 Zeichen)");
   }
   else {
     $query = sprintf(
@@ -55,7 +55,7 @@
 
     if(mysqli_num_rows($result) != 0) {
       // Nutzername bereits benutzt
-      send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "info", "Nutzername bereits vergeben");
+      send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "info", "Nutzername bereits vergeben");
     }
     // Nutzername valid
   }
@@ -78,14 +78,14 @@
   }
   elseif(strlen($_POST["name"]) > 50) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Anzeigename zu lang (max 50 Zeichen)");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Anzeigename zu lang (max 50 Zeichen)");
   }
   // Name gegeben und valid
   
   // Eintrag in der Datenbank aktualisieren, wenn etwas geändert wurde
   if($skip_username & $skip_name) {
     // Nichts geändert
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nichts geändert");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Nichts geändert");
   }
   if(!$skip_username) {
     // Nutzername aktualisieren
@@ -96,7 +96,7 @@
     );
     if(!mysqli_query($db, $query)) {
       // Fehler beim Query
-      send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
+      send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
     }
   }
   if(!$skip_name) {
@@ -108,14 +108,14 @@
     );
     if(!mysqli_query($db, $query)) {
       // Fehler beim Query
-      send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
+      send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
     }
   }
   if(!$skip_username & $skip_name) {
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Nutzername aktualisiert");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Nutzername aktualisiert");
   }
   if($skip_username & !$skip_name) {
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Anzeigename aktualisiert");
+    send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Anzeigename aktualisiert");
   }
-  send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Nutzer- und Anzeigename aktualisiert");
+  send_alert(RELPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Nutzer- und Anzeigename aktualisiert");
 ?>

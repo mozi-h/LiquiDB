@@ -4,13 +4,13 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 <!--Bootstrap CSS-->
-<link rel="stylesheet" href="<?= $relative_offset ?>css/bootstrap.min.css">
+<link rel="stylesheet" href="<?= RELPATH ?>css/bootstrap.min.css">
 
 <!--DataTables CSS-->
-<link rel="stylesheet" type="text/css" href="<?= $relative_offset ?>DataTables/datatables.min.css">
+<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>DataTables/datatables.min.css">
 
 <!--Material Icons CSS-->
-<link rel="stylesheet" href="<?= $relative_offset ?>css/materialdesignicons.min.css">
+<link rel="stylesheet" href="<?= RELPATH ?>css/materialdesignicons.min.css">
 
 <!--Custom CSS-->
-<link rel="stylesheet" href="<?= $relative_offset ?>css/style.css">
+<link rel="stylesheet" href="<?= RELPATH ?>css/style.css">

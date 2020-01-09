@@ -1,6 +1,7 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require_once("../config.php");
+  set_relpath(1);
+
   restricted("Trainer");
 ?>
 

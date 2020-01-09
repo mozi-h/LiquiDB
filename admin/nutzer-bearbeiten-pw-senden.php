@@ -1,13 +1,13 @@
 <?php
-  $relative_offset = "../";
-  require_once($relative_offset . "config.php");
+  require("../config.php");
+  set_relpath(1);
 
   restricted("Admin");
 
   // Existiert der Nutzer?
   if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
     // id keine Nummer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist keine Nummer");
+    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist keine Nummer");
   }
   $_GET["id"] = intval($_GET["id"]);
   $query = sprintf(
@@ -17,7 +17,7 @@
   $result = mysqli_query($db, $query);
   if(mysqli_num_rows($result) != 1) {
     // id kein Nutzer
-    send_alert($relative_offset . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
+    send_alert(ABSPATH . "admin/nutzer.php", "warning", "ID ist kein Nutzer");
   }
   $user = get_user($_GET["id"]);
 
@@ -27,15 +27,15 @@
   $_POST["pw"] = trim($_POST["pw"] ?? "");
   if(empty($_POST["pw"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Kein Passwort gegeben");
+    send_alert(ABSPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Kein Passwort gegeben");
   }
   elseif(strlen($_POST["pw"]) < 4) {
     // Zu kurz
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Passwort zu kurz (min 8 Zeichen)");
+    send_alert(ABSPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Passwort zu kurz (min 8 Zeichen)");
   }
   elseif(strlen($_POST["pw"]) > 32) {
     // Zu lang
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Passwort zu lang (max 200 Zeichen)");
+    send_alert(ABSPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "warning", "Passwort zu lang (max 200 Zeichen)");
   }
   // Passwort valid
 
@@ -52,8 +52,8 @@
   );
   if(!mysqli_query($db, $query)) {
     // fehler beim Query
-    send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
+    send_alert(ABSPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "danger", "Fehler: " . mysqli_error($db));
   }
   $_SESSION["USER_LOGINTIME"] = time() + 5;
-  send_alert($relative_offset . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Passwort geändert");
+  send_alert(ABSPATH . "admin/nutzer-bearbeiten.php?id=" . $user["id"], "success", "Passwort geändert");
 ?>
