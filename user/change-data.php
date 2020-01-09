@@ -2,7 +2,7 @@
   require_once("../config.php");
   set_relpath(1);
 
-  // Normalerweise restricted(); außnahme, da Sonderseite
+  // Normalerweise restricted(); Ausnahme, da Sonderseite
   if(!isset($_SESSION["USER"])) {
     send_alert("../index.php", "info", "Sie müssen sich zuerst anmelden");
   }
