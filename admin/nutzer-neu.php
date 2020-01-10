@@ -3,12 +3,6 @@
   set_relpath(1);
 
   restricted("Admin");
-
-  // STATISTIK
-  // Anzahl der Benutzer
-  $query = "SELECT COUNT(1) FROM user;";
-  $result = mysqli_query($db, $query);
-  $anzahl_benutzer = mysqli_fetch_array($result)[0];
 ?>
 <!DOCTYPE html>
 <html lang="de">
