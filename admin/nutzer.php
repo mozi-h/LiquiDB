@@ -60,7 +60,7 @@
     $(document).ready(function() {
       $('#datatable').DataTable( {
         "language": {
-          url: "<?= RELPATH ?>DataTables/german.json"
+          url: "<?= RELPATH ?>js/DataTables/german.json"
         },
         "order": [
           [1, "asc"]

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="<?= RELPATH ?>css/bootstrap.min.css">
 
 <!--DataTables CSS-->
-<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>DataTables/datatables.min.css">
+<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>js/DataTables/datatables.min.css">
 
 <!--Material Icons CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>css/materialdesignicons.min.css">
