@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server Version:               10.4.8-MariaDB - mariadb.org binary distribution
 -- Server Betriebssystem:        Win64
--- HeidiSQL Version:             10.2.0.5599
+-- HeidiSQL Version:             10.3.0.5771
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -182,6 +182,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   `name` varchar(50) NOT NULL,
   `gender` enum('m','w','d') DEFAULT NULL,
   `birthday` date DEFAULT NULL,
+  `age` tinyint(3) unsigned GENERATED ALWAYS AS (timestampdiff(YEAR,`birthday`,current_timestamp())) VIRTUAL,
   `birthplace` varchar(50) DEFAULT NULL,
   `address` varchar(50) DEFAULT NULL COMMENT 'Straße und Hausnummer',
   `post_code` varchar(6) DEFAULT NULL,
