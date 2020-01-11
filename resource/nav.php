@@ -25,7 +25,7 @@
         <a class="nav-link <?= $tab["admin"] ?? "" ?> <?= ["disabled", ""][$user["ist_admin"]] ?>" href="<?= RELPATH ?>admin/index.php">Admin</a>
       </li>
       <li class="nav-item dropdown ml-auto">
-        <a class="nav-link dropdown-toggle <?= $tab["nutzer"] ?? "" ?>" data-toggle="dropdown" href="#" role="button"><?= $user["anzeigename_esc"] ?></a>
+        <a class="nav-link dropdown-toggle <?= $tab["nutzer"] ?? "" ?>" data-toggle="dropdown" href="#" role="button"><?= $user["display_name_esc"] ?></a>
         <div class="dropdown-menu dropdown-menu-right">
           <a class="dropdown-item mdi mdi-account-edit" href="<?= RELPATH ?>user/change-data.php"> Daten ändern</a>
           <div class="dropdown-divider"></div>

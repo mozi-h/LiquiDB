@@ -35,7 +35,7 @@
   function get_user(int $id): array {
     global $db;
     $query = sprintf(
-      "SELECT *, pw_hash AS pw_hash FROM user WHERE id = %d",
+      "SELECT * FROM user WHERE id = %d",
       $id
     );
     $result = mysqli_query($db, $query);
@@ -57,8 +57,7 @@
     }
     $user["username_esc"] = escape($user["username"]);
     $user["name_esc"] = escape($user["name"]);
-    $user["anzeigename"] = $user["name"] ?? $user["username"];
-    $user["anzeigename_esc"] = escape($user["anzeigename"]);
+    $user["display_name_esc"] = escape($user["display_name"]);
     return $user;
   }
 
@@ -107,13 +106,18 @@
    *
    * Bricht Ausführung ab und leitet direkt zur Zielseite weiter.
    * Zielseite muss ein catch_alert() haben.
+   * $post_forward dient dazu, (gültige) Eingaben eines Formulars bei einem Fehler an die Zielseite zurückzusenden. Wenn z.B. ein Passwort beim Anmelden falsch ist, kann der Nutzername zurückgesendet werden, um dem Benutzer ein doppeltes Eingeben zu ersparen.
    *
    * @param string $target Zielseite.
    * @param string $type Bootstrap Farbe.
    * @param string $content Anzuzigender Text im Alert-Banner.
    * @param bool $allow_html Ob HTML aufgelöst werden soll.
+   * @param array $fill_form Zum erneuten Ausfüllen von Formularen bei Fehlern
    */
-  function send_alert(string $target, string $type, string $content, bool $allow_html = False): void {
+  function send_alert(string $target, string $type, string $content, bool $allow_html = False, array $fill_form = NULL): void {
+    if($fill_form) {
+      $_SESSION["fill_form"] = $fill_form;
+    }
     $_SESSION["alert"] = [
       "type" => $type,
       "content" => $content,
@@ -142,6 +146,33 @@
       </div>
       <?php
     }
+  }
+
+  /**
+   * Gibt den gespeicherten Wert des Formular-Inputs aus.
+   * 
+   * z.B. bei Fehlern nützlich. Wird von send_alert() ausgelöst.
+   *
+   * @param string $input_name Name des Input-Tags
+   * @param bool $is_textarea Überspringt "value=''". Nützlich für Textfelder
+   *
+   * @return string (Falls vorhander) der gespeicherte Wert
+   */
+  function get_fill_form(string $input_name, bool $is_textarea = False): string {
+    $value = "";
+    if(isset($_SESSION["fill_form"])) {
+      $value = $_SESSION["fill_form"][$input_name] ?? "";
+  
+      unset($_SESSION["fill_form"][$input_name]);
+      if(count($_SESSION["fill_form"]) == 0) {
+          unset($_SESSION["fill_form"]);
+      }
+    }
+
+    if($is_textarea) {
+      return $value;
+    }
+    return "value='$value'";
   }
 
   /**
@@ -204,5 +235,36 @@
   function hash_password(string $salt, string $password, string $algo = "sha256"): string {
     $mixed_password = $salt . $password;
     return strtoupper(hash($algo, $mixed_password));
+  }
+
+  /**
+   * Gibt das Alter einer Person wieder, die am gegebenen Tag Geburtstag hat.
+   *
+   * @param string $birthday Format des Geburtsdatums: YYYY-MM-DD
+   *
+   * @return int
+   */
+  function get_age(string $birthday): int {
+    $timezone = new DateTimeZone(TIMEZONE);
+    $birthday_date = new DateTime($birthday, $timezone);
+    $current_date = new DateTime("now", $timezone);
+    return $birthday_date->diff($current_date)->y;
+  }
+
+  /**
+   * "NULL", wenn $field == NULL ist, ansonsten "'$field'", wobei $field mysql-escaped wurde.
+   * 
+   * Für optionale Felder gedacht, die als "NULL" (Konstante) oder "'Entsprech\'ender Wert'" (Sicherer String) sein können.
+   *
+   * @param mixed $field
+   *
+   * @return string
+   */
+  function mysql_escape_or_null($field): string {
+    global $db;
+    if(!$field) {
+      return "NULL";
+    }
+    return "'" . mysqli_real_escape_string($db, $field) . "'";
   }
 ?>

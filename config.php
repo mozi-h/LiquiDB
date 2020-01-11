@@ -12,6 +12,9 @@
   /** MySQL Datenbank Datenbanken-Name */
   define("DB_NAME", "liquidb");
 
+  /** Zeitzone */
+  define("TIMEZONE", "Europe/Berlin");
+
   // ** Ender der Einstellungen - Hierunter nicht bearbeiten ** //
 
   /**

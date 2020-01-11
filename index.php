@@ -46,7 +46,7 @@
           Angemeldet
         </div>
         <div class="card-body">
-          Hallo, <?= $user["anzeigename_esc"] ?>
+          Hallo, <?= $user["display_name_esc"] ?>
         </div>
       </div>
     <?php } ?>

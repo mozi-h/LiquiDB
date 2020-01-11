@@ -44,7 +44,7 @@
           <li><?= number_format($anzahl_trainer, 0, ",", ".") ?> Trainer</li>
           <li><?= number_format($anzahl_admins, 0, ",", ".") . " " . get_quantity($anzahl_admins, "Admin") ?></li>
         </ul>
-        <a class="btn btn-outline-primary mdi mdi-account-badge" href="nutzer.php"> Auflisten</a>
+        <a class="btn btn-outline-primary mdi mdi-account-multiple" href="nutzer.php"> Auflisten</a>
         <a class="btn btn-outline-success mdi mdi-account-plus" href="nutzer-neu.php"> Hinzufügen</a>
       </div>
     </div>

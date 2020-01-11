@@ -9,7 +9,7 @@
 <head>
   <?= get_head() ?>
   
-  <title>Admin | LiquiDB</title>
+  <title>Neuer Benutzer | LiquiDB</title>
 </head>
 <body>
   <?= get_nav("admin") ?>
