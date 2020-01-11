@@ -21,3 +21,8 @@
     transform-origin: 0 0;
   }
 }
+
+.hint {
+  border-bottom: 2px dotted gray;
+  cursor: help;
+}

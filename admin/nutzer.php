@@ -26,8 +26,8 @@
         <th></th>
         <th>Nutzername</th>
         <th>Name</th>
-        <th data-toggle="tooltip" data-placement="top" title="Trainer">T</th>
-        <th data-toggle="tooltip" data-placement="top" title="Admin">A</th>
+        <th class="hint" data-toggle="tooltip" data-placement="top" title="Trainer">T</th>
+        <th class="hint" data-toggle="tooltip" data-placement="top" title="Admin">A</th>
       </thead>
       <tbody>
         <?php

@@ -58,11 +58,6 @@
   
   <?= get_foot() ?>
   <script>
-    // Tooltips aktivieren
-    $(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-
     function random_password() {
       var rand_pw = Math.random().toString(36).substr(2, 12);
       $("#pw").val(rand_pw);
