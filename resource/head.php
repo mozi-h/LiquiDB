@@ -6,11 +6,18 @@
 <!--Bootstrap CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap.min.css">
 
-<!--DataTables CSS-->
-<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>vendor/DataTables/datatables.min.css">
-
 <!--Material Icons CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/materialdesignicons.min.css">
+
+<?php
+  if($load_bootstrap_table) { ?>
+    <!--Fontawesome CSS-->
+    <link rel="stylesheet" href="<?= RELPATH ?>vendor/fontawesome/css/all.min.css">
+
+    <!--Bootstrap Table CSS-->
+    <link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap-table/bootstrap-table.min.css">
+  <?php }
+?>
 
 <!--Custom CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>css/style.css">

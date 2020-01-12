@@ -7,5 +7,9 @@
 <!--Bootstrap JS-->
 <script src="<?= RELPATH ?>vendor/bootstrap.min.js"></script>
 
-<!--Datatables JS-->
-<script type="text/javascript" src="<?= RELPATH ?>vendor/DataTables/datatables.min.js"></script>
+<?php
+  if($load_bootstrap_table) { ?>
+    <!--Bootstrap Table JS-->
+    <script src="<?= RELPATH ?>vendor/bootstrap-table/bootstrap-table.min.js"></script>
+  <?php }
+?>
