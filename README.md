@@ -2,7 +2,7 @@
 Daten-Manager für Schwimmkurse. Teilnehmer, Abzeichen(-fortschritt) und Benutzerrechte. Entwickelt für die DLRG.
 > LiquiDB ist derzeit noch in der Entwicklung. Erste Beta-Versionen voraussichtlich Mitte 2020.
 
-Hier der Plan:
+Bei Fragen und Ideen bitte ein [Issue](https://github.com/mozi-h/LiquiDB/issues) erstellen.
 
 
 ## Die Idee
