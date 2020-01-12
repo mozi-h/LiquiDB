@@ -4,13 +4,13 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 <!--Bootstrap CSS-->
-<link rel="stylesheet" href="<?= RELPATH ?>css/bootstrap.min.css">
+<link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap.min.css">
 
 <!--DataTables CSS-->
-<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>js/DataTables/datatables.min.css">
+<link rel="stylesheet" type="text/css" href="<?= RELPATH ?>vendor/DataTables/datatables.min.css">
 
 <!--Material Icons CSS-->
-<link rel="stylesheet" href="<?= RELPATH ?>css/materialdesignicons.min.css">
+<link rel="stylesheet" href="<?= RELPATH ?>vendor/materialdesignicons.min.css">
 
 <!--Custom CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>css/style.css">
