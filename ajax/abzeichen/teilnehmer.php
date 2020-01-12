@@ -1,34 +1,65 @@
 <?php
-  require_once("../../config.php");
-  set_relpath(2);
-  $minify = False;
+  require_once("../config.php");
+  set_relpath(1);
 
   restricted("Trainer");
-
-  // TEILNEHMERDATEN
-  $query = "SELECT p.id, p.name, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note, u.display_name
-            FROM participant AS p
-            LEFT JOIN user AS u ON p.added_by_user_id = u.id";
-            $result = mysqli_query($db, $query);
-
-  $output = [];
-  while($row = mysqli_fetch_array($result)) {
-    $tmp = [];
-    $tmp[] = "<a href='teilnehmer-bearbeiten.php?id=<?= " . $row["id"] . " ?>' class='btn btn-primary mdi mdi-account-edit-outline'></a>";
-    $tmp[] = escape($row["name"] ?? "");
-    $tmp[] = escape($row["birthday_formatted"] ?? "");
-    $tmp[] = escape($row["age"] ?? "");
-    $tmp[] = escape($row["city"] ?? "");
-    $tmp[] = nl2br(escape($row["note"] ?? ""));
-    $tmp[] = escape($row["display_name"]);
-
-    $output[] = $tmp;
-  }
-
-  if($minify) {
-    echo json_encode(["data" => $output]);
-  }
-  else {
-    echo json_encode(["data" => $output], JSON_PRETTY_PRINT);
-  }
 ?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <?= get_head() ?>
+  
+  <title>Teilnehmer | LiquiDB</title>
+</head>
+<body>
+  <?= get_nav("abzeichen") ?>
+  <div class="container">
+    <h1 class="text-info display-4 text-center mdi mdi-account-outline"> Teilnehmer</h1>
+    <?= catch_alert() ?>
+    <table class="table table-striped text-center" id="datatable">
+      <thead>
+        <th></th>
+        <th data-priority=1>Name</th>
+        <th data-priority=700>Geburtstag</th>
+        <th data-priority=600>Alter</th>
+        <th data-priority=870>Ort</th>
+        <th data-priority=10000>Notiz</th>
+        <th data-priority=10000>Eingepflegt von</th>
+      </thead>
+      <tbody>
+        <!--AJAX-->
+      </tbody>
+    </table>
+  </div>
+  
+  <?= get_foot() ?>
+  <script>
+    // DataTable aktivieren
+    $(document).ready(function() {
+      $('#datatable').DataTable( {
+        "language": {
+          url: "<?= RELPATH ?>js/DataTables/german.json"
+        },
+        "ajax": "<?= RELPATH ?>ajax/abzeichen/teilnehmer.php",
+        "responsive": { // WIP - RESPONSIVE DATATABLE
+        details: {
+              type: "column"
+            }
+          },
+        "order": [
+          [1, "asc"]
+        ],
+        "columns": [
+          {orderable: false},
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      });
+    });
+  </script>
+</body>
+</html>
