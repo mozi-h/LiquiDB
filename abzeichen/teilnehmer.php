@@ -35,33 +35,5 @@
   </div>
   
   <?= get_foot() ?>
-  <script>
-    // DataTable aktivieren
-    $(document).ready(function() {
-      $('#datatable').DataTable( {
-        "language": {
-          url: "<?= RELPATH ?>js/DataTables/german.json"
-        },
-        "ajax": "<?= RELPATH ?>ajax/abzeichen/teilnehmer.php",
-        "responsive": { // WIP - RESPONSIVE DATATABLE
-        details: {
-              type: "column"
-            }
-          },
-        "order": [
-          [1, "asc"]
-        ],
-        "columns": [
-          {orderable: false},
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      });
-    });
-  </script>
 </body>
 </html>

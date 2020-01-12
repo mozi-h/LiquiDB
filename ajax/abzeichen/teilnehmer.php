@@ -13,7 +13,7 @@
   $output = [];
   while($row = mysqli_fetch_array($result)) {
     $tmp = [];
-    $tmp["id"] = "<a href='teilnehmer-bearbeiten.php?id=<?= " . $row["id"] . " ?>' class='btn btn-primary mdi mdi-account-edit-outline'></a>";
+    $tmp["id"] = $row["id"];
     $tmp["name"] = escape($row["name"] ?? "");
     $tmp["birthday"] = escape($row["birthday_formatted"] ?? "");
     $tmp["age"] = escape($row["age"] ?? "");
