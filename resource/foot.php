@@ -11,5 +11,6 @@
   if($load_bootstrap_table) { ?>
     <!--Bootstrap Table JS-->
     <script src="<?= RELPATH ?>vendor/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="<?= RELPATH ?>vendor/bootstrap-table/locale/bootstrap-table-de-DE.min.js"></script>
   <?php }
 ?>

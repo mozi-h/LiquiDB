@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap.min.css">
 
 <!--Material Icons CSS-->
-<link rel="stylesheet" href="<?= RELPATH ?>vendor/materialdesignicons.min.css">
+<link rel="stylesheet" href="<?= RELPATH ?>vendor/materialdesignicons/materialdesignicons.min.css">
 
 <?php
   if($load_bootstrap_table) { ?>
