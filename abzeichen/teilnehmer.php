@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <?= get_head() ?>
+  <?= get_head(True) ?>
   
   <title>Teilnehmer | LiquiDB</title>
 </head>
@@ -18,50 +18,39 @@
   <div class="container">
     <h1 class="text-info display-4 text-center mdi mdi-account-outline"> Teilnehmer</h1>
     <?= catch_alert() ?>
-    <table class="table table-striped text-center" id="datatable">
-      <thead>
-        <th></th>
-        <th data-priority=1>Name</th>
-        <th data-priority=700>Geburtstag</th>
-        <th data-priority=600>Alter</th>
-        <th data-priority=870>Ort</th>
-        <th data-priority=10000>Notiz</th>
-        <th data-priority=10000>Eingepflegt von</th>
+    <table id="data" class="table table-striped"
+      data-toggle="table"
+      data-url="<?= RELPATH ?>ajax/abzeichen/teilnehmer.php"
+
+      data-locale="de-DE"
+      data-pagination="true"
+      data-show-extended-pagination="true"
+      data-show-fullscreen="true"
+      data-search="true"
+      data-sort-name="name"
+      data-sort-order="asc"
+      data-detail-view="false"
+      data-detail-view-by-click="true"
+      data-detail-formatter="detailFormatter">
+      <thead class="thead-dark">
+        <th data-field="name" data-sortable="true">Name</th>
+        <th class="d-none d-md-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
+        <th data-field="age" data-sortable="true">Alter</th>
+        <th class="d-none d-sm-table-cell" data-field="city" data-sortable="true">Ort</th>
+        <th data-field="note" data-sortable="true">Notiz</th>
       </thead>
-      <tbody>
-        <!--AJAX-->
-      </tbody>
     </table>
+    <div class="alert alert-info mdi mdi-account-edit-outline" role="alert">
+      Klicke auf einen Teilnehmer, um diesen zu bearbeiten
+    </div>
   </div>
   
-  <?= get_foot() ?>
+  <?= get_foot(True) ?>
   <script>
-    // DataTable aktivieren
-    $(document).ready(function() {
-      $('#datatable').DataTable( {
-        "language": {
-          url: "<?= RELPATH ?>js/DataTables/german.json"
-        },
-        "ajax": "<?= RELPATH ?>ajax/abzeichen/teilnehmer.php",
-        "responsive": { // WIP - RESPONSIVE DATATABLE
-        details: {
-              type: "column"
-            }
-          },
-        "order": [
-          [1, "asc"]
-        ],
-        "columns": [
-          {orderable: false},
-          null,
-          null,
-          null,
-          null,
-          null,
-          null
-        ]
-      });
-    });
+    // Detail-Funktion leitet zur Bearbeiten-Seite weiter
+    function detailFormatter(index, row) {
+      window.location.href = "<?= RELPATH ?>abzeichen/teilnehmer-bearbeiten.php?id=" + row["id"];
+    }
   </script>
 </body>
 </html>
