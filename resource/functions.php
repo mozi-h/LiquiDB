@@ -61,13 +61,21 @@
     return $user;
   }
 
-  /** Löst sich zu Tags für <head> auf. */
-  function get_head(): void {
+  /**
+   * Löst sich zu Tags für <head> auf.
+   *
+   * @param bool $load_bootstrap_table Ob Bootstrap Table für die Seite bereitstehen soll.
+  */
+  function get_head(bool $load_bootstrap_table = False): void {
     require("head.php");
   }
 
-  /** Löst sich zur Script-Include Liste auf. */
-  function get_foot(): void {
+  /**
+   * Löst sich zur Script-Include Liste auf.
+   *
+   * @param bool $load_bootstrap_table Ob Bootstrap Table für die Seite bereitstehen soll.
+   * */
+  function get_foot(bool $load_bootstrap_table = False): void {
     require("foot.php");
   }
 
