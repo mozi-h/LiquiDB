@@ -33,7 +33,7 @@
         </form>
       </div>
     </div>
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-header">
         Passwort ändern
       </div>
@@ -46,7 +46,29 @@
         </form>
       </div>
     </div>
+    <div class="card">
+      <div class="card-header">
+        Benutzerrollen
+      </div>
+      <div class="card-body">
+        <?php if($user["id"] == 1) { ?>
+          <div class="custom-control custom-checkbox ml-sm-3">
+          <input type="checkbox" class="custom-control-input" readonly checked>
+          <label class="custom-control-label">System</label>
+          </div>
+        <?php } else { ?>
+          <div class="custom-control custom-checkbox ml-sm-3">
+            <input type="checkbox" class="custom-control-input" readonly <?= ["", "checked"][$user["ist_trainer"]] ?>>
+            <label class="custom-control-label">Trainer</label>
+          </div>
+          <div class="custom-control custom-checkbox ml-sm-3">
+            <input type="checkbox" class="custom-control-input" readonly <?= ["", "checked"][$user["ist_admin"]] ?>>
+            <label class="custom-control-label">Admin</label>
+          </div>
+        <?php } ?>
+      </div>
     </div>
+  </div>
   
   <?= get_foot() ?>
 </body>
