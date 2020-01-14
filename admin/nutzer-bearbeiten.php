@@ -45,7 +45,7 @@
         <form class="form-inline" method="post" action="<?= RELPATH ?>admin/nutzer-bearbeiten-namen-senden.php?id=<?= $user["id"] ?>">
           <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 name="username" placeholder="Nutzername" value="<?= $user["username_esc"] ?>">
           <input type="text" class="form-control mb-2 mr-sm-2" maxlength=50 name="name" placeholder="Anzeigename (optional)" value="<?= $user["name_esc"] ?? "" ?>">
-          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+          <button type="submit" class="btn btn-primary mb-2" <?php if($user["id"] == 1) {echo "disabled";} ?>>Ändern</button>
         </form>
       </div>
     </div>
@@ -62,7 +62,7 @@
               <button class="btn btn-info hint" type="button" data-toggle="tooltip" data-placement="top" title="Zufall" onclick="random_password()"><span class="mdi mdi-dice-multiple"></span></button>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+          <button type="submit" class="btn btn-primary mb-2" <?php if($user["id"] == 1) {echo "disabled";} ?>>Ändern</button>
         </form>
         <span class="text-muted">Der Benutzer wird abgemeldet und bei erneutem Anmelden aufgefordert, sein Passwort zu ändern.</span>
       </div>
