@@ -5,7 +5,7 @@
   restricted("Admin");
 
   /** Ziel für Alerts */
-  $target = RELPATH . "admin/nutzer-bearbeiten.php?id=";
+  $target = RELPATH . "admin/nutzer.php";
 
   // Existiert der Nutzer?
   if(!filter_var($_GET["id"], FILTER_VALIDATE_INT)) {
