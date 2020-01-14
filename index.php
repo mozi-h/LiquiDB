@@ -34,7 +34,7 @@
           <form class="form-inline mt-3" method="post" action="user/login.php">
             <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 name="username" placeholder="Nutzername">
             <input type="password" class="form-control mb-2 mr-sm-2" required minlength=8 maxlength=200 name="pw" placeholder="Passwort">
-            <button type="submit" class="btn btn-primary mb-2">Anmelden</button>
+            <button type="submit" class="btn btn-primary mb-2 mdi mdi-login"> Anmelden</button>
           </form>
           <span class="text-muted">Accounts können nur von Administratoren erstellt werden.</span>
         </div>

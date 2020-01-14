@@ -40,7 +40,7 @@
         <th data-field="note" data-sortable="true">Notiz</th>
       </thead>
     </table>
-    <div class="alert alert-info mdi mdi-account-edit-outline" role="alert">
+    <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">
       Klicke auf einen Teilnehmer, um diesen zu bearbeiten
     </div>
   </div>
