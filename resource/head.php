@@ -5,7 +5,8 @@
 
 <!--Bootstrap CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap.min.css">
-
+<!--Bootstrap Datepicker CSS-->
+<link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css">
 <!--Material Icons CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/materialdesignicons/materialdesignicons.min.css">
 

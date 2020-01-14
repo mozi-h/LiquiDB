@@ -6,6 +6,8 @@
 
 <!--Bootstrap JS-->
 <script src="<?= RELPATH ?>vendor/bootstrap.min.js"></script>
+<!--Bootstrap Datepicker JS-->
+<script src="<?= RELPATH ?>vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
 <?php
   if($load_bootstrap_table) { ?>
