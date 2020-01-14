@@ -49,7 +49,7 @@
         </form>
       </div>
     </div>
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-header">
         Passwort ändern
       </div>
@@ -67,7 +67,32 @@
         <span class="text-muted">Der Benutzer wird abgemeldet und bei erneutem Anmelden aufgefordert, sein Passwort zu ändern.</span>
       </div>
     </div>
+    <div class="card">
+      <div class="card-header">
+        Benutzerrollen
+      </div>
+      <div class="card-body">
+        <form method="post" action="<?= RELPATH ?>admin/nutzer-bearbeiten-rollen-senden.php?id=<?= $user["id"] ?>">
+          <?php if($user["id"] == 1) { ?>
+            <div class="custom-control custom-checkbox ml-sm-3">
+            <input type="checkbox" class="custom-control-input" readonly checked>
+            <label class="custom-control-label">System</label>
+            </div>
+          <?php } else { ?>
+            <div class="custom-control custom-checkbox ml-sm-3">
+              <input type="checkbox" class="custom-control-input" name="ist_trainer" id="ist_trainer" <?= ["", "checked"][$user["ist_trainer"]] ?>>
+              <label class="custom-control-label" for="ist_trainer">Trainer</label>
+            </div>
+            <div class="custom-control custom-checkbox ml-sm-3 mb-2">
+              <input type="checkbox" class="custom-control-input" name="ist_admin" id="ist_admin" <?= ["", "checked"][$user["ist_admin"]] ?>>
+              <label class="custom-control-label" for="ist_admin">Admin</label>
+            </div>
+            <button type="submit" class="btn btn-primary" <?php if($user["id"] == 1) {echo "disabled";} ?>>Ändern</button>
+          <?php } ?>
+        </form>
+      </div>
     </div>
+  </div>
   
   <?= get_foot() ?>
   <script>
