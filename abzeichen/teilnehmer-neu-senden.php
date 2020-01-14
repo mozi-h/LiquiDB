@@ -1,4 +1,5 @@
 <?php
+var_dump($_POST);die;
   require_once("../config.php");
   set_relpath(1);
 
@@ -37,9 +38,9 @@
     // Nicht gegeben oder nur Leerzeichen
     unset($_POST["birthday"]);
   }
-  elseif(!preg_match("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $_POST["birthday"])) {
-    // kein YYYY-MM-DD Datum
-    send_alert($target, "warning", "Kein YYYY-MM-DD Datum");
+  elseif(!preg_match("/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{4}$/", $_POST["birthday"])) {
+    // kein TT.MM.JJJJ Datum
+    send_alert($target, "warning", "Kein TT.MM.JJJJ Datum");
   }
   else {
     $age = get_age($_POST["birthday"]);
@@ -53,6 +54,7 @@
       send_alert($target, "warning", "Zu alt (max 100 Jahre alt)", False, $_POST);
     }
     // Geburtsdatum gegeben und valid
+    $_POST["birthday"] = substr($_POST["birthday"], 6, 4) . "-" . substr($_POST["birthday"], 3, 2) . "-" . substr($_POST["birthday"], 0, 2);
   }
 
   // Geburtsort validieren
