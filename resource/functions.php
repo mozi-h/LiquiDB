@@ -50,6 +50,12 @@
       "w" => "Weiblich",
       "d" => "Divers"
     ][$participant["gender"]] ?? NULL;
+    if($participant["birthday"]) { // 20.06.2001  2001-06-20
+      $participant["birthday_formatted"] = substr($participant["birthday"], 8, 2) . "." . substr($participant["birthday"], 5, 2) . "." . substr($participant["birthday"], 0, 4);
+    }
+    else {
+      $participant["birthday_formatted"] = NULL;
+    }
     $participant["display_gender"] = escape($participant["display_gender"]);
     $participant["name_esc"] = escape($participant["name"]);
     $participant["birthplace_esc"] = escape($participant["birthplace"]);
