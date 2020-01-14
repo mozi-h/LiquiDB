@@ -37,11 +37,12 @@
     // Nicht gegeben oder nur Leerzeichen
     unset($_POST["birthday"]);
   }
-  elseif(!preg_match("/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/", $_POST["birthday"])) {
-    // kein YYYY-MM-DD Datum
-    send_alert($target, "warning", "Kein YYYY-MM-DD Datum");
+  elseif(!preg_match("/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d{4}$/", $_POST["birthday"])) {
+    // kein TT.MM.JJJJ Datum
+    send_alert($target, "warning", "Kein TT.MM.JJJJ Datum");
   }
   else {
+    $_POST["birthday"] = substr($_POST["birthday"], 6, 4) . "-" . substr($_POST["birthday"], 3, 2) . "-" . substr($_POST["birthday"], 0, 2);
     $age = get_age($_POST["birthday"]);
 
     if($age < 2) {
@@ -134,7 +135,6 @@
   }
   // Notiz valid
 
-  // WORK IN PROGRESS - WIP
   // Eintrag in die Datenbank tun
   $query = sprintf(
     "INSERT INTO participant(name, birthday, birthplace, address, post_code, city, note) VALUE ('%s', %s, %s, %s, %s, %s, %s)",
