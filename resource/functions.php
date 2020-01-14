@@ -24,6 +24,42 @@
   }
 
   /**
+   * Löst Teilnehmer-$id zu einem Array mit dessen Daten auf.
+   *
+   * @param int $id Teilnehmer-ID
+   *
+   * @return array Teilnehmerdaten aus der Datenbank plus einige Zusatzdaten
+   */
+  function get_participant(int $id): array {
+    global $db;
+    $query = sprintf(
+      "SELECT * FROM participant WHERE id = %d",
+      $id
+    );
+    $result = mysqli_query($db, $query);
+    if(!$result) {
+      die("Fehler beim auflösen der ParticipantID.");
+    }
+    $participant = mysqli_fetch_array($result);
+    if(!$participant) {
+      die("Fehler beim auflösen der ParticipantID.");
+    }
+    // Zusatzdaten
+    $participant["display_gender"] = [
+      "m" => "Männlich",
+      "w" => "Weiblich",
+      "d" => "Divers"
+    ][$participant["gender"]] ?? NULL;
+    $participant["display_gender"] = escape($participant["display_gender"]);
+    $participant["name_esc"] = escape($participant["name"]);
+    $participant["birthplace_esc"] = escape($participant["birthplace"]);
+    $participant["address_esc"] = escape($participant["address"]);
+    $participant["city_esc"] = escape($participant["city"]);
+    $participant["note_esc"] = escape($participant["note"]);
+    return $participant;
+  }
+
+  /**
    * Löst Nutzer-$id zu einem Array mit dessen Daten auf.
    *
    * Überprüft außerdem, ob die Sitzung abgelaufen ist.
@@ -55,6 +91,7 @@
         send_alert(RELPATH . "index.php", "info", "Ihre Sitzung ist abgelaufen, da sich ihr Passwort verändert hat.");
       }
     }
+    // Zusatzdaten
     $user["username_esc"] = escape($user["username"]);
     $user["name_esc"] = escape($user["name"]);
     $user["display_name_esc"] = escape($user["display_name"]);
