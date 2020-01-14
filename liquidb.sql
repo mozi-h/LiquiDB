@@ -203,7 +203,7 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(7, 'Eryn Chadwick', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(8, 'Aisha Lunt', 'w', NULL, NULL, NULL, NULL, NULL, 'Vitae id possimus quisquam ab sapiente molestias amet. Quia nihil praesentium quia voluptatem soluta ullam. Deserunt numquam beatae non consequatur velit. Beatae sequi repellat earum eveniet.\r\nSequi vel sit aut sunt consequatur sed. Dolore dolorem qui doloribus ut.', 1),
 	(9, 'Owen Pratt', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
-	(10, 'Abdul Forester', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
+	(10, 'Abdul-Kai Forester', 'm', '2000-10-04', 'Ulster', 'Kaufstraße 12c', '74635', 'Orthausen', 'Erreichbar unter 02938 748564\r\nSchwierigkeiten mit Streckentauchen', 1),
 	(11, 'Ronald Warren', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(12, 'Julius Utterson', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(13, 'Sebastian Wills', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
