@@ -27,9 +27,9 @@
       <li class="nav-item dropdown ml-auto">
         <a class="nav-link dropdown-toggle <?= $tab["nutzer"] ?? "" ?>" data-toggle="dropdown" href="#" role="button"><?= $user["display_name_esc"] ?></a>
         <div class="dropdown-menu dropdown-menu-right">
-          <a class="dropdown-item mdi mdi-account-edit" href="<?= RELPATH ?>user/change-data.php"> Daten ändern</a>
+          <a class="dropdown-item mdi mdi-account-edit" href="<?= RELPATH ?>user/change-data.php">Daten ändern</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item mdi mdi-logout" href="<?= RELPATH ?>user/logout.php"> Logout</a>
+          <a class="dropdown-item mdi mdi-logout" href="<?= RELPATH ?>user/logout.php">Logout</a>
         </div>
       </li>
       <?php

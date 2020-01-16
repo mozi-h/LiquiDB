@@ -18,7 +18,7 @@
 <body>
   <?= get_nav("nutzer") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-pencil"> Daten ändern</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-pencil">Daten ändern</h1>
 
     <?= catch_alert() ?>
     <div class="card mb-3">

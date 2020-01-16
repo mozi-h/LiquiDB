@@ -16,7 +16,7 @@
 <body>
   <?= get_nav("abzeichen") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-outline"> Teilnehmer</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-outline">Teilnehmer</h1>
     <?= catch_alert() ?>
     <table id="data" class="table table-striped"
       data-toggle="table"

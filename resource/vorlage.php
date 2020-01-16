@@ -7,7 +7,7 @@
 <head>
   <?= get_head() ?>
   
-  <title>LiquiDB</title>
+  <title>Vorlage | LiquiDB</title>
 </head>
 <body>
   <?= get_nav("vorlage") ?>
@@ -29,15 +29,31 @@
       </div>
       <div class="card-body">
         <ul>
-          <li class="mdi mdi-account"> Benutzer</li>
+          <li class="mdi mdi-account">Benutzer</li>
           <ul>
-            <li class="mdi mdi-shield-account"> Admin</li>
-            <li class="mdi mdi-account-star"> Trainer</li>
-            <li class="mdi mdi-pencil"> Bearbeiten</li>
-            <li class="mdi mdi-login"> Login</li>
-            <li class="mdi mdi-logout"> Logout</li>
+            <li class="mdi mdi-shield-account">Admin</li>
+            <li class="mdi mdi-account-star">Trainer</li>
+            <li class="mdi mdi-pencil">Bearbeiten</li>
+            <li class="mdi mdi-login">Login</li>
+            <li class="mdi mdi-logout">Logout</li>
           </ul>
-          <li class="mdi mdi-account-outline"> Teilnehmer</li>
+          <li class="mdi mdi-account-outline">Teilnehmer</li>
+          <li class="mdi mdi-card-outline">Abzeichen</li>
+          <ul>
+            <li class="mdi mdi-cards-outline">Abzeichen auflisten</li>
+            <li class="mdi mdi-card-plus-outline">Abzeichen neu</li>
+            <li class="mdi mdi-card-outline">Abzeichen (in Arbeit)</li>
+            <li class="mdi mdi-card-bulleted">Abzeichen (fertig)</li>
+            <li class="mdi mdi-card-bulleted-off-outline">Abzeichen (abgelaufen)</li>
+          </ul>
+          <li class="mdi mdi-clipboard-outline">Disziplin</li>
+          <ul>
+            <li class="mdi mdi-clipboard-multiple-outline">Disziplinen auflisten</li>
+            <li class="mdi mdi-clipboard-plus-outline">Disziplin neu</li>
+            <li class="mdi mdi-clipboard-outline">Disziplin (in Arbeit)</li>
+            <li class="mdi mdi-clipboard-check">Disziplin (fertig)</li>
+            <li class="mdi mdi-clipboard-alert-outline">Disziplin (abgelaufen)</li>
+          </ul>
         </ul>
       </div>
     </div>
