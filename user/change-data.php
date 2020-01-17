@@ -29,7 +29,7 @@
         <form class="form-inline" method="post" action="<?= RELPATH ?>user/change-names-senden.php">
           <input type="text" class="form-control mb-2 mr-sm-2" required minlength=4 maxlength=32 name="username" placeholder="Nutzername" value="<?= $user["username_esc"] ?>">
           <input type="text" class="form-control mb-2 mr-sm-2" maxlength=50 name="name" placeholder="Anzeigename (optional)" value="<?= $user["name_esc"] ?? "" ?>">
-          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+          <button type="submit" class="btn btn-primary mb-2" <?php if($user["id"] == 1) {echo "disabled";} ?>>Ändern</button>
         </form>
       </div>
     </div>
@@ -42,7 +42,7 @@
           <input type="password" class="form-control mb-2 mr-sm-2" required minlength=8 maxlength=200 name="pw-alt" placeholder="Altes Passwort">
           <input type="password" class="form-control mb-2 mr-sm-2" required minlength=8 maxlength=200 name="pw-neu" placeholder="Neues Passwort">
           <input type="password" class="form-control mb-2 mr-sm-2" required minlength=8 maxlength=200 name="pw-neu-wdh" placeholder="Passwort wiederholen">
-          <button type="submit" class="btn btn-primary mb-2">Ändern</button>
+          <button type="submit" class="btn btn-primary mb-2"  <?php if($user["id"] == 1) {echo "disabled";} ?>>Ändern</button>
         </form>
       </div>
     </div>

@@ -11,6 +11,11 @@
   /** Ziel für Alerts */
   $target = RELPATH . "user/change-data.php";
 
+  if($user["id"] == 1) {
+    // System kann nicht bearbeitet werden
+    send_alert($target, "danger", "System kann nicht bearbeitet werden");
+  }
+
   // Nutzername validieren, WENN
   // - Nutzername geändert
   // Groß- / Kleinschreibung egal
