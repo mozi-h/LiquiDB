@@ -3,43 +3,45 @@
   set_relpath(1);
 
   restricted("Trainer");
+
+  // Liste der Abzeichenarten
+  $query = "SELECT name_internal, name_short
+            FROM badge_list
+            WHERE regulation = (SELECT * FROM regulation_current);";
+  $badge_list_result = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <?= get_head() ?>
   
-  <title>Neuer Teilnehmer | LiquiDB</title>
+  <title>Abzeichen anlegen | LiquiDB</title>
 </head>
 <body>
   <?= get_nav("abzeichen") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-plus">Neuer Teilnehmer</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-card-plus-outline">Abzeichen anlegen</h1>
 
     <?= catch_alert() ?>
     <div class="card">
-      <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/teilnehmer-neu-senden.php">
+      <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/abzeichen-neu-senden.php">
         <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="name">Name</label>
+          <div class="form-group col-md-6">
+            <label for="name">Teilnehmer</label>
             <input type="text" class="form-control" name="name" id="name" required minlength=5 maxlength=50 placeholder="Max Muster (Pflichtfeld)" <?= get_fill_form("name") ?>>
           </div>
-          <div class="form-group col-md-2 ">
-            <label for="name">Geschlecht</label>
-            <select class="selectpicker form-control" name="gender" data-style="custom-select" title="Auswählen...">
-              <option value="m">Männlich</option>
-              <option value="w">Weiblich</option>
-              <option value="d">Divers</option>
+          <div class="form-group col-md-3">
+            <label for="badge">Abzeichen</label>
+            <select class="selectpicker" data-style="custom-select" data-live-search="true" name="badge" id="badge" title="Auswählen">
+              <?php
+                // Alle Abzeichenarten ausgeben
+                foreach($badge_list_result as $badge) {
+                  ?>
+                  <option value="<?= escape($badge["name_internal"]) ?>"><?= escape($badge["name_short"]) ?></option>
+                  <?php
+                }
+              ?>
             </select>
-          </div>
-          <div id="datepicker-container" class="form-group col-md-3">
-            <label for="birthday">Geburtsdatum</label>
-            <div class="input-group date">
-              <input type="text" class="form-control" name="birthday" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ">
-              <div class="input-group-append input-group-addon">
-                <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
-              </div>
-            </div>
           </div>
           <div class="form-group col-md-3">
             <label for="birthplace">Geburtsort</label>
@@ -70,20 +72,5 @@
   </div>
   
   <?= get_foot() ?>
-  <script>
-    <?php
-      $timezone = new DateTimeZone(TIMEZONE);
-      $current_date = new DateTime("now", $timezone);
-    ?>
-    $('#datepicker-container .input-group.date').datepicker({
-      format: "dd.mm.yyyy",
-      weekStart: 1,
-      startDate: "<?= $current_date->sub(new DateInterval("P100Y"))->format("d.m.Y") ?>",
-      endDate: "<?= $current_date->add(new DateInterval("P98Y"))->format("d.m.Y") ?>",
-      startView: 2,
-      maxViewMode: 3,
-      autoclose: true
-    });
-  </script>
 </body>
 </html>
