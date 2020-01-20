@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
--- Host:                         127.0.0.1
--- Server Version:               10.4.8-MariaDB - mariadb.org binary distribution
--- Server Betriebssystem:        Win64
+-- Host:                         mozi-h.hopto.org
+-- Server Version:               10.3.17-MariaDB-0+deb10u1 - Raspbian 10
+-- Server Betriebssystem:        debian-linux-gnueabihf
 -- HeidiSQL Version:             10.3.0.5771
 -- --------------------------------------------------------
 
@@ -40,24 +40,27 @@ CREATE TABLE IF NOT EXISTS `badge` (
 
 -- Exportiere Struktur von Tabelle liquidb.badge_list
 CREATE TABLE IF NOT EXISTS `badge_list` (
+  `regulation` varchar(50) NOT NULL DEFAULT 'PO_01/01/2020',
   `name_internal` enum('FRUEHSCHWIMMER','DSA_BRONZE','DSA_SILBER','DSA_GOLD','JUNIORRETTER','DRSA_BRONZE','DRSA_SILBER','DRSA_GOLD','DSTA') NOT NULL,
   `name` varchar(50) NOT NULL,
   `name_short` varchar(50) NOT NULL,
-  PRIMARY KEY (`name_internal`)
+  PRIMARY KEY (`name_internal`,`regulation`),
+  KEY `FK_badge_list_regulation` (`regulation`),
+  CONSTRAINT `FK_badge_list_regulation` FOREIGN KEY (`regulation`) REFERENCES `regulation` (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Exportiere Daten aus Tabelle liquidb.badge_list: ~9 rows (ungefähr)
 /*!40000 ALTER TABLE `badge_list` DISABLE KEYS */;
-INSERT INTO `badge_list` (`name_internal`, `name`, `name_short`) VALUES
-	('FRUEHSCHWIMMER', 'Frühschwimmer (Seepferdchen)', 'Frühschwimmer'),
-	('DSA_BRONZE', 'Deutsches Schwimmabzeichen Bronze', 'DSA Bronze'),
-	('DSA_SILBER', 'Deutsches Schwimmabzeichen Silber', 'DSA Silber'),
-	('DSA_GOLD', 'Deutsches Schwimmabzeichen Gold', 'DSA Gold'),
-	('JUNIORRETTER', 'Juniorretter', 'Juniorretter'),
-	('DRSA_BRONZE', 'Deutsches Rettungsschwimmabzeichen Bronze', 'DRSA Bronze'),
-	('DRSA_SILBER', 'Deutsches Rettungsschwimmabzeichen Silber', 'DRSA Silber'),
-	('DRSA_GOLD', 'Deutsches Rettungsschwimmabzeichen Gold', 'DRSA Gold'),
-	('DSTA', 'Deutsches Schnorcheltauchabzeichen', 'Dt. Schnorcheltauchabzeichen');
+INSERT INTO `badge_list` (`regulation`, `name_internal`, `name`, `name_short`) VALUES
+	('PO_01/01/2020', 'FRUEHSCHWIMMER', 'Frühschwimmer (Seepferdchen)', 'Frühschwimmer'),
+	('PO_01/01/2020', 'DSA_BRONZE', 'Deutsches Schwimmabzeichen Bronze', 'DSA Bronze'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Deutsches Schwimmabzeichen Silber', 'DSA Silber'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Deutsches Schwimmabzeichen Gold', 'DSA Gold'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Juniorretter', 'Juniorretter'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Deutsches Rettungsschwimmabzeichen Bronze', 'DRSA Bronze'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Deutsches Rettungsschwimmabzeichen Silber', 'DRSA Silber'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Deutsches Rettungsschwimmabzeichen Gold', 'DRSA Gold'),
+	('PO_01/01/2020', 'DSTA', 'Deutsches Schnorcheltauchabzeichen', 'Dt. Schnorcheltauchabzeichen');
 /*!40000 ALTER TABLE `badge_list` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.discipline
@@ -77,6 +80,7 @@ CREATE TABLE IF NOT EXISTS `discipline` (
 
 -- Exportiere Struktur von Tabelle liquidb.discipline_list
 CREATE TABLE IF NOT EXISTS `discipline_list` (
+  `regulation` varchar(50) NOT NULL DEFAULT 'PO_01/01/2020',
   `badge_name_internal` enum('FRUEHSCHWIMMER','DSA_BRONZE','DSA_SILBER','DSA_GOLD','JUNIORRETTER','DRSA_BRONZE','DRSA_SILBER','DRSA_GOLD','DSTA') NOT NULL,
   `type` enum('Voraussetzung','Praxis','Theorie') NOT NULL,
   `id` tinyint(3) unsigned NOT NULL,
@@ -84,96 +88,98 @@ CREATE TABLE IF NOT EXISTS `discipline_list` (
   `auto_type` enum('NORMAL','TIME','AGE','BADGE','DOCUMENT') NOT NULL DEFAULT 'NORMAL' COMMENT 'Gibt Auskunft über den Automatisierungstypen',
   `auto_info` varchar(50) DEFAULT NULL COMMENT 'Informationen für die Automatisierung\r\nTIME: maximale Zeit in Sekunden\r\nAGE: Mindestalter in Jahren\r\nBADGE: badge_id ded benötigten Abzeichens\r\nDOCUMENT: maximale Gültigkeitsdauer in Jahren\r\nAlle anderen: NULL (keine Bedeutung)',
   `description` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`badge_name_internal`,`id`,`type`),
-  CONSTRAINT `FK_discipline_list_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`)
+  PRIMARY KEY (`badge_name_internal`,`id`,`type`,`regulation`),
+  KEY `FK_discipline_list_regulation` (`regulation`),
+  CONSTRAINT `FK_discipline_list_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`),
+  CONSTRAINT `FK_discipline_list_regulation` FOREIGN KEY (`regulation`) REFERENCES `regulation` (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Exportiere Daten aus Tabelle liquidb.discipline_list: ~83 rows (ungefähr)
 /*!40000 ALTER TABLE `discipline_list` DISABLE KEYS */;
-INSERT INTO `discipline_list` (`badge_name_internal`, `type`, `id`, `name`, `auto_type`, `auto_info`, `description`) VALUES
-	('FRUEHSCHWIMMER', 'Praxis', 1, 'Sprung + Schwimmen', 'NORMAL', NULL, 'Sprung vom Beckenrand mit anschließendem 25 m Schwimmen in einer Schwimmart in Bauch- oder Rückenlage (Grobform, während des Schwimmens in Bauchlage erkennbar ins Wasser ausatmen)'),
-	('FRUEHSCHWIMMER', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnis von Baderegeln'),
-	('FRUEHSCHWIMMER', 'Praxis', 2, 'Eintauchen', 'NORMAL', NULL, 'Heraufholen eines Gegenstandes mit den Händen aus schultertiefem Wasser (Schultertiefe bezogen auf den Prüfling)'),
-	('DSA_BRONZE', 'Praxis', 1, 'Tieftauchen', 'NORMAL', NULL, 'einmal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen eines Gegenstandes (z.B.: kleiner Tauchring)'),
-	('DSA_BRONZE', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnis von Baderegeln'),
-	('DSA_BRONZE', 'Praxis', 2, 'Paketsprung', 'NORMAL', NULL, 'ein Paketsprung vom Startblock oder 1 m-Brett'),
-	('DSA_BRONZE', 'Praxis', 3, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 15 Minuten Schwimmen. In dieser Zeit sind mindestens 200 m zurückzulegen, davon 150 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 50 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
-	('DSA_SILBER', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 20 Minuten Schwimmen. In dieser Zeit sind mindestens 400 m zurückzulegen, davon 300 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 100 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
-	('DSA_SILBER', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnisse von Baderegeln'),
-	('DSA_SILBER', 'Praxis', 2, 'Streckentauchen', 'NORMAL', NULL, '10 m Streckentauchen mit Abstoßen vom Beckenrand im Wasser'),
-	('DSA_SILBER', 'Theorie', 2, 'Selbstrettung', 'NORMAL', NULL, 'Verhalten zur Selbstrettung (z.B. Verhalten bei Erschöpfung, Lösen von Krämpfen)'),
-	('DSA_SILBER', 'Praxis', 3, 'Tieftauchen', 'NORMAL', NULL, 'zweimal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen je eines Gegenstandes (z.B.: kleiner Tauchring)'),
-	('DSA_SILBER', 'Praxis', 4, 'Springen', 'NORMAL', NULL, 'Sprung aus 3 m Höhe oder zwei verschiedene Sprünge aus 1 m Höhe'),
-	('DSA_GOLD', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 30 Minuten Schwimmen. In dieser Zeit sind mindestens 800 m zurückzulegen, davon 650 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 150 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
-	('DSA_GOLD', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnisse von Baderegeln'),
-	('DSA_GOLD', 'Praxis', 2, 'Kraulschwimmen', 'NORMAL', NULL, 'Startsprung und 25 m Kraulschwimmen'),
-	('DSA_GOLD', 'Theorie', 2, 'Selbstrettung', 'NORMAL', NULL, 'Verhalten zur Selbstrettung (z.B. Verhalten bei Erschöpfung, Lösen von Krämpfen)'),
-	('DSA_GOLD', 'Praxis', 3, 'Brustschwimmen', 'TIME', '75', 'Startsprung und 50 m Brustschwimmen in höchstens 1:15 Minuten'),
-	('DSA_GOLD', 'Theorie', 3, 'Fremdrettung', 'NORMAL', NULL, 'Einfache Fremdrettung (Hilfe bei Bade-, Boots- und Eisunfällen)'),
-	('DSA_GOLD', 'Praxis', 4, 'Rückenschwimmen', 'NORMAL', NULL, '50 m Rückenschwimmen mit Grätschschwung ohne Armtätigkeit oder Rückenkraulschwimmen'),
-	('DSA_GOLD', 'Praxis', 5, 'Streckentauchen', 'NORMAL', NULL, '10 m Streckentauchen aus der Schwimmlage (ohne Abstoßen vom Beckenrand)'),
-	('DSA_GOLD', 'Praxis', 6, 'Tieftauchen', 'TIME', '180', 'dreimal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen je eines Gegenstandes (z.B.: kleiner Tauchring) innerhalb von 3 Minuten'),
-	('DSA_GOLD', 'Praxis', 7, 'Springen', 'NORMAL', NULL, 'Sprung aus 3m Höhe oder 2 verschiedene Sprünge aus 1m Höhe'),
-	('DSA_GOLD', 'Praxis', 8, 'Transportschwimmen', 'NORMAL', NULL, '50 m Transportschwimmen: Schieben oder Ziehen'),
-	('JUNIORRETTER', 'Voraussetzung', 1, '10 Jahre', 'AGE', '10', 'Mindestalter 10 Jahre'),
-	('JUNIORRETTER', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, '100m Schwimmen ohne Unterbrechung, davon 25 m Kraulschwimmen, 25 m Rückenkraulschwimmen, 25 m Brustschwimmen und 25 m Rückenschwimmen mit Grätschschwung'),
-	('JUNIORRETTER', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen\r\n'),
-	('JUNIORRETTER', 'Voraussetzung', 2, 'DSA Gold', 'BADGE', 'DSA_GOLD', 'Deutsches Schwimmabzeichen Gold'),
-	('JUNIORRETTER', 'Praxis', 2, 'Schleppen', 'NORMAL', NULL, '25 m Schleppen eines Partners mit Achselschleppgriff'),
-	('JUNIORRETTER', 'Praxis', 3, 'Selbstretten', 'NORMAL', NULL, 'Selbstrettungsübung: Kombi-Übung in leichter Freizeitbekleidung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: fußwärts ins Wasser springen, danach Schwebelage einnehmen, 4 Minuten Schweben an der Wasseroberfläche in Rückenlage mit Paddelbewegungen, 6 Minuten langsames Schwimmen, jedoch mindestens viermal die Körperlage wechseln (Bauch-, Rücken-, Seitenlage), die Kleidungsstücke in tiefen Wasser ausziehen'),
-	('JUNIORRETTER', 'Praxis', 4, 'Fremdretten', 'NORMAL', NULL, 'Fremdrettungsübung: Kombi-Übung, die in der angegebenen Reihenfolge zu erfüllen ist: 15 m zu einem Partner in Bauchlage anschwimmen, nach halber Strecke auf ca. 2 m Tiefe abtauchen und zwei kleine Tauchringe heraufholen, diese anschließend fallen lassen und das Anschwimmen fortsetzen, Rückweg: 15 m Schleppen eines Partners mit Achselschleppgriff, Sichern des Geretteten'),
-	('DRSA_BRONZE', 'Voraussetzung', 1, '12 Jahre', 'AGE', '12', 'Mindestalter 12 Jahre'),
-	('DRSA_BRONZE', 'Praxis', 1, 'Schwimmen', 'TIME', '600', '200 m Schwimmen in höchstens 10 Minuten, davon 100 m in Bauchlage und 100 m in Rückenlage mit Grätschschwung ohne Armtätigkeit'),
-	('DRSA_BRONZE', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
-	('DRSA_BRONZE', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '240', '100 m Schwimmen in Kleidung in höchstens 4 Minuten, anschließend im Wasser entkleiden'),
-	('DRSA_BRONZE', 'Praxis', 3, '3 Sprünge', 'NORMAL', NULL, 'Drei verschiedene Sprünge aus etwa 1 m Höhe (z.B. Paketsprung, Schrittsprung, Startsprung, Fußsprung, Kopfsprung)'),
-	('DRSA_BRONZE', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '15 m Streckentauchen'),
-	('DRSA_BRONZE', 'Praxis', 5, 'Tieftauchen', 'TIME', '180', 'zweimal Tieftauchen von der Wasseroberfläche, einmal kopfwärts und einmal fußwärts, innerhalb von 3 Minuten mit zweimaligem Heraufholen eines 5-kg-Tauchrings oder eines gleichartigen Gegenstandes (Wassertiefe zwischen 2 und 3 m)'),
-	('DRSA_BRONZE', 'Praxis', 6, 'Transportschwimmen', 'NORMAL', NULL, '50 m Transportschwimmen: Schieben oder Ziehen'),
-	('DRSA_BRONZE', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
-	('DRSA_BRONZE', 'Praxis', 8, 'Schleppen', 'NORMAL', NULL, '50 m Schleppen, je eine Hälfte mit Kopf- oder Achselschleppgriff und dem Standard-Fesselschleppgriff'),
-	('DRSA_BRONZE', 'Praxis', 9, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: 20 m Anschwimmen in Bauchlage, hierbei etwa auf halber Strecke Abtauchen auf 2 bis 3 m Wassertiefe und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen und das Anschwimmen fortsetzen; 20 m Schleppen eines Partners'),
-	('DRSA_BRONZE', 'Praxis', 10, 'Anlandbringen', 'NORMAL', NULL, 'Demonstration des Anlandbringens'),
-	('DRSA_BRONZE', 'Praxis', 11, 'HLW', 'NORMAL', NULL, '3 Minuten Durchführung der Herz-Lungen-Wiederbelebung (HLW)'),
-	('DRSA_SILBER', 'Voraussetzung', 1, '14 Jahre', 'AGE', '14', 'Mindestalter 14 Jahre'),
-	('DRSA_SILBER', 'Praxis', 1, 'Schwimmen', 'TIME', '900', '400 m Schwimmen in höchstens 15 Minuten, davon 50 m Kraulschwimmen, 150 m Brustschwimmen und 200 m Schwimmen in Rückenlage mit Grätschschwung ohne Armtätigkeit'),
-	('DRSA_SILBER', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
-	('DRSA_SILBER', 'Voraussetzung', 2, 'EH-Ausbildung', 'DOCUMENT', '2', 'Nachweis einer Erste Hilfe Ausbildung'),
-	('DRSA_SILBER', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '720', '300 m Schwimmen in Kleidung in höchstens 12 Minuten, anschließend im Wasser entkleiden'),
-	('DRSA_SILBER', 'Praxis', 3, '3-m-Sprung', 'NORMAL', NULL, 'Ein Sprung aus 3 m Höhe'),
-	('DRSA_SILBER', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '25 m Streckentauchen'),
-	('DRSA_SILBER', 'Praxis', 5, 'Tieftauchen', 'TIME', '180', 'dreimal Tieftauchen von der Wasseroberfläche, zweimal kopfwärts und einmal fußwärts innerhalb von 3 Minuten, mit dreimaligem Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes (Wassertiefe zwischen 3 und 5 m)'),
-	('DRSA_SILBER', 'Praxis', 6, 'Transportschwimmen', 'TIME', '90', '50 m Transportschwimmen: Schieben oder Ziehen in höchstens 1:30 Minuten'),
-	('DRSA_SILBER', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
-	('DRSA_SILBER', 'Praxis', 8, 'Kleiderschleppen', 'TIME', '240', '50 m Schleppen in höchstens 4 Minuten, beide Partner in Kleidung, je eine Hälfte der Strecke mit Kopf- oder Achsel- und einem Fesselschleppgriff (Standard-Fesselschleppgriff oder Seemannsgriff)'),
-	('DRSA_SILBER', 'Praxis', 9, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: Sprung kopfwärts ins Wasser; 20 m Anschwimmen in Bauchlage; Abtauchen auf 3 bis 5 m Tiefe, Heraufholen eines 5-kg-Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen; Lösen aus einer Umklammerung durch einen Befreiungsgriff; 25 m Schleppen; Sichern und Anlandbringen des Geretteten; 3 Minuten Durchführung der Herz-Lungen-Wiederbelebung (HLW)'),
-	('DRSA_SILBER', 'Praxis', 10, 'Rettungsgeräte', 'NORMAL', NULL, 'Handhabung und praktischer Einsatz eines Rettungsgerätes (z.B. Gurtretter, Wurfleine oder Rettungsring)'),
-	('DRSA_GOLD', 'Voraussetzung', 1, '16 Jahre', 'AGE', '16', 'Mindestalter 16 Jahre'),
-	('DRSA_GOLD', 'Praxis', 1, 'Flossenschwimmen', 'TIME', '360', '300 m Flossenschwimmen in höchstens 6 Minuten, davon 250 m Bauch- oder Seitenlage und 50 m Schleppen , zu schleppender Partner in Kleidung (Kopf- und Achselgriff)'),
-	('DRSA_GOLD', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
-	('DRSA_GOLD', 'Voraussetzung', 2, 'DRSA Silber', 'BADGE', 'DRSA_SILBER', 'Deutsches Rettungsschwimmabzeichen Silber'),
-	('DRSA_GOLD', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '540', '300 m Schwimmen in Kleidung in höchstens 9 Minuten, anschließend im Wasser entkleiden'),
-	('DRSA_GOLD', 'Voraussetzung', 3, 'Selbsterklärung', 'DOCUMENT', '2', 'Ärtzliche Tauglichkeit (Die Selbsterklärung zum Gesundheitszustand muss vor Beginn vorliegen)'),
-	('DRSA_GOLD', 'Praxis', 3, 'Schnellschwimmen', 'TIME', '100', '100 m Schwimmen in höchstens 1:40 Minuten'),
-	('DRSA_GOLD', 'Voraussetzung', 4, 'EH-Ausbildung', 'DOCUMENT', '2', 'Nachweis einer Erste Hilfe Ausbildung zur Ausstellung'),
-	('DRSA_GOLD', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '30 m Streckentauchen, dabei von 10 kleinen Ringen oder Tellern, die auf einer Strecke von 20 m in einer höchstens 2 m breiten Gasse verteilt sind, mindestens 8 Stück aufsammeln'),
-	('DRSA_GOLD', 'Praxis', 5, 'K-Tieftauchen', 'TIME', '180', 'dreimal Tieftauchen in Kleidung innerhalb von 3 Minuten; das erste Mal mit einem Kopfsprung, anschließend je einmal kopf- und fußwärts von der Wasseroberfläche mit gleichzeitigem Heraufholen von jeweils zwei 5-kg-Tauchringen oder gleichartigen Gegenständen, die etwa 3 m voneinander entfernt liegen (Wassertiefe zwischen 3 und 5 m)'),
-	('DRSA_GOLD', 'Praxis', 6, 'K-Transportschwimmen', 'TIME', '90', '50 m Transportschwimmen, beide Partner in Kleidung: Schieben oder Ziehen in höchstens 1:30 Minuten'),
-	('DRSA_GOLD', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
-	('DRSA_GOLD', 'Praxis', 8, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung (beide Partner in Kleidung), die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: Sprung kopfwärts ins Wasser; 25 m Schwimmen in höchstens 30 Sekunden; Abtauchen auf 3 bis 5 m Tiefe und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen; Lösen aus der Umklammerung durch einen Befreiungsgriff; 25 m Schleppen in höchstens 60 Sekunden mit einem Fesselschleppgriff; Sichern und Anlandbringen des Geretteten; 3 Minuten Durchf'),
-	('DRSA_GOLD', 'Praxis', 9, 'Rettungsgeräte', 'NORMAL', NULL, 'Handhabung von Rettungsgeräten: Retten mit dem "Rettungsball mit Leine": Zielwerfen in einen Sektor mit 3-m-Öffnung in 12 m Entfernung: 6 Würfe innerhalb von 5 Minuten, davon 4 Treffer Retten mit einem anderen Rettungsgerät Retten mit Rettungsgurt Leine (als Schwimmer und Leinenführer)'),
-	('DRSA_GOLD', 'Praxis', 10, 'Hilfsmittel', 'NORMAL', NULL, 'Handhabung gebräuchlicher Hilfsmittel zur Wiederbelebung'),
-	('DSTA', 'Voraussetzung', 1, '12 Jahre', 'AGE', '12', 'Mindestalter 12 Jahre (bei Minderjährigen ist die Einverständniserklärung des Erziehungsberechtigten erforderlich)'),
-	('DSTA', 'Praxis', 1, '2-Flossenschwimmen', 'NORMAL', NULL, '600 m Flossenschwimmen ohne Zeitbegrenzung (je 200m Bauch-, Rücken- und Seitenlage)'),
-	('DSTA', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
-	('DSTA', 'Voraussetzung', 2, 'Selbsterklärung', 'DOCUMENT', '2', 'Ärtzliche Tauglichkeit ((oder Formblatt "Selbsterklärung zum Gesundheitszustand") Tauchtauglichkeit nicht älter als 4 Wochen)'),
-	('DSTA', 'Praxis', 2, '1-Flossenschwimmen', 'NORMAL', NULL, '200 m Flossenschwimmen mit einer Flosse und Armbewegung'),
-	('DSTA', 'Voraussetzung', 3, 'DRSA Bronze', 'BADGE', 'DRSA_BRONZE', 'Deutsches Rettungsschwimmabzeichen Bronze'),
-	('DSTA', 'Praxis', 3, 'Streckentauchen', 'NORMAL', NULL, '30 m Streckentauchen ohne Startsprung'),
-	('DSTA', 'Praxis', 4, 'Zeittauchen', 'NORMAL', NULL, '30 Sekunden Zeittauchen (Festhalten erlaubt)'),
-	('DSTA', 'Praxis', 5, 'Ausblasen', 'NORMAL', NULL, 'in mindestens 3 m Tiefe Taucherbrille abnehmen, wieder aufsetzen und ausblasen'),
-	('DSTA', 'Praxis', 6, 'Tieftauchen', 'TIME', '60', 'dreimal innerhalb von einer Minute 3 m Tieftauchen'),
-	('DSTA', 'Praxis', 7, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung: 50 m Flossenschwimmen in Bauchlage mit Armtätigkeit, einmal 3 bis 5 m Tieftauchen und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, 50m Schleppen eines Partners, 3 Minuten Durchführen der Herz-Lungen-Wiederbelebung (HLW)');
+INSERT INTO `discipline_list` (`regulation`, `badge_name_internal`, `type`, `id`, `name`, `auto_type`, `auto_info`, `description`) VALUES
+	('PO_01/01/2020', 'FRUEHSCHWIMMER', 'Praxis', 1, 'Sprung + Schwimmen', 'NORMAL', NULL, 'Sprung vom Beckenrand mit anschließendem 25 m Schwimmen in einer Schwimmart in Bauch- oder Rückenlage (Grobform, während des Schwimmens in Bauchlage erkennbar ins Wasser ausatmen)'),
+	('PO_01/01/2020', 'FRUEHSCHWIMMER', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnis von Baderegeln'),
+	('PO_01/01/2020', 'FRUEHSCHWIMMER', 'Praxis', 2, 'Eintauchen', 'NORMAL', NULL, 'Heraufholen eines Gegenstandes mit den Händen aus schultertiefem Wasser (Schultertiefe bezogen auf den Prüfling)'),
+	('PO_01/01/2020', 'DSA_BRONZE', 'Praxis', 1, 'Tieftauchen', 'NORMAL', NULL, 'einmal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen eines Gegenstandes (z.B.: kleiner Tauchring)'),
+	('PO_01/01/2020', 'DSA_BRONZE', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnis von Baderegeln'),
+	('PO_01/01/2020', 'DSA_BRONZE', 'Praxis', 2, 'Paketsprung', 'NORMAL', NULL, 'ein Paketsprung vom Startblock oder 1 m-Brett'),
+	('PO_01/01/2020', 'DSA_BRONZE', 'Praxis', 3, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 15 Minuten Schwimmen. In dieser Zeit sind mindestens 200 m zurückzulegen, davon 150 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 50 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 20 Minuten Schwimmen. In dieser Zeit sind mindestens 400 m zurückzulegen, davon 300 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 100 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnisse von Baderegeln'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Praxis', 2, 'Streckentauchen', 'NORMAL', NULL, '10 m Streckentauchen mit Abstoßen vom Beckenrand im Wasser'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Theorie', 2, 'Selbstrettung', 'NORMAL', NULL, 'Verhalten zur Selbstrettung (z.B. Verhalten bei Erschöpfung, Lösen von Krämpfen)'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Praxis', 3, 'Tieftauchen', 'NORMAL', NULL, 'zweimal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen je eines Gegenstandes (z.B.: kleiner Tauchring)'),
+	('PO_01/01/2020', 'DSA_SILBER', 'Praxis', 4, 'Springen', 'NORMAL', NULL, 'Sprung aus 3 m Höhe oder zwei verschiedene Sprünge aus 1 m Höhe'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, 'Kombi-Übung: Sprung kopfwärts vom Beckenrand und 30 Minuten Schwimmen. In dieser Zeit sind mindestens 800 m zurückzulegen, davon 650 m in Bauch- oder Rückenlage in einer erkennbaren Schwimmart und 150 m in der anderen Körperlage (Wechsel der Körperlage während des Schwimmens auf der Schwimmbahn ohne Festhalten)'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Theorie', 1, 'Baderegeln', 'NORMAL', NULL, 'Kenntnisse von Baderegeln'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 2, 'Kraulschwimmen', 'NORMAL', NULL, 'Startsprung und 25 m Kraulschwimmen'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Theorie', 2, 'Selbstrettung', 'NORMAL', NULL, 'Verhalten zur Selbstrettung (z.B. Verhalten bei Erschöpfung, Lösen von Krämpfen)'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 3, 'Brustschwimmen', 'TIME', '75', 'Startsprung und 50 m Brustschwimmen in höchstens 1:15 Minuten'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Theorie', 3, 'Fremdrettung', 'NORMAL', NULL, 'Einfache Fremdrettung (Hilfe bei Bade-, Boots- und Eisunfällen)'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 4, 'Rückenschwimmen', 'NORMAL', NULL, '50 m Rückenschwimmen mit Grätschschwung ohne Armtätigkeit oder Rückenkraulschwimmen'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 5, 'Streckentauchen', 'NORMAL', NULL, '10 m Streckentauchen aus der Schwimmlage (ohne Abstoßen vom Beckenrand)'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 6, 'Tieftauchen', 'TIME', '180', 'dreimal ca. 2 m Tieftauchen von der Wasseroberfläche mit Heraufholen je eines Gegenstandes (z.B.: kleiner Tauchring) innerhalb von 3 Minuten'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 7, 'Springen', 'NORMAL', NULL, 'Sprung aus 3m Höhe oder 2 verschiedene Sprünge aus 1m Höhe'),
+	('PO_01/01/2020', 'DSA_GOLD', 'Praxis', 8, 'Transportschwimmen', 'NORMAL', NULL, '50 m Transportschwimmen: Schieben oder Ziehen'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Voraussetzung', 1, '10 Jahre', 'AGE', '10', 'Mindestalter 10 Jahre'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Praxis', 1, 'Schwimmen', 'NORMAL', NULL, '100m Schwimmen ohne Unterbrechung, davon 25 m Kraulschwimmen, 25 m Rückenkraulschwimmen, 25 m Brustschwimmen und 25 m Rückenschwimmen mit Grätschschwung'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen\r\n'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Voraussetzung', 2, 'DSA Gold', 'BADGE', 'DSA_GOLD', 'Deutsches Schwimmabzeichen Gold'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Praxis', 2, 'Schleppen', 'NORMAL', NULL, '25 m Schleppen eines Partners mit Achselschleppgriff'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Praxis', 3, 'Selbstretten', 'NORMAL', NULL, 'Selbstrettungsübung: Kombi-Übung in leichter Freizeitbekleidung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: fußwärts ins Wasser springen, danach Schwebelage einnehmen, 4 Minuten Schweben an der Wasseroberfläche in Rückenlage mit Paddelbewegungen, 6 Minuten langsames Schwimmen, jedoch mindestens viermal die Körperlage wechseln (Bauch-, Rücken-, Seitenlage), die Kleidungsstücke in tiefen Wasser ausziehen'),
+	('PO_01/01/2020', 'JUNIORRETTER', 'Praxis', 4, 'Fremdretten', 'NORMAL', NULL, 'Fremdrettungsübung: Kombi-Übung, die in der angegebenen Reihenfolge zu erfüllen ist: 15 m zu einem Partner in Bauchlage anschwimmen, nach halber Strecke auf ca. 2 m Tiefe abtauchen und zwei kleine Tauchringe heraufholen, diese anschließend fallen lassen und das Anschwimmen fortsetzen, Rückweg: 15 m Schleppen eines Partners mit Achselschleppgriff, Sichern des Geretteten'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Voraussetzung', 1, '12 Jahre', 'AGE', '12', 'Mindestalter 12 Jahre'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 1, 'Schwimmen', 'TIME', '600', '200 m Schwimmen in höchstens 10 Minuten, davon 100 m in Bauchlage und 100 m in Rückenlage mit Grätschschwung ohne Armtätigkeit'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '240', '100 m Schwimmen in Kleidung in höchstens 4 Minuten, anschließend im Wasser entkleiden'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 3, '3 Sprünge', 'NORMAL', NULL, 'Drei verschiedene Sprünge aus etwa 1 m Höhe (z.B. Paketsprung, Schrittsprung, Startsprung, Fußsprung, Kopfsprung)'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '15 m Streckentauchen'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 5, 'Tieftauchen', 'TIME', '180', 'zweimal Tieftauchen von der Wasseroberfläche, einmal kopfwärts und einmal fußwärts, innerhalb von 3 Minuten mit zweimaligem Heraufholen eines 5-kg-Tauchrings oder eines gleichartigen Gegenstandes (Wassertiefe zwischen 2 und 3 m)'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 6, 'Transportschwimmen', 'NORMAL', NULL, '50 m Transportschwimmen: Schieben oder Ziehen'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 8, 'Schleppen', 'NORMAL', NULL, '50 m Schleppen, je eine Hälfte mit Kopf- oder Achselschleppgriff und dem Standard-Fesselschleppgriff'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 9, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: 20 m Anschwimmen in Bauchlage, hierbei etwa auf halber Strecke Abtauchen auf 2 bis 3 m Wassertiefe und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen und das Anschwimmen fortsetzen; 20 m Schleppen eines Partners'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 10, 'Anlandbringen', 'NORMAL', NULL, 'Demonstration des Anlandbringens'),
+	('PO_01/01/2020', 'DRSA_BRONZE', 'Praxis', 11, 'HLW', 'NORMAL', NULL, '3 Minuten Durchführung der Herz-Lungen-Wiederbelebung (HLW)'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Voraussetzung', 1, '14 Jahre', 'AGE', '14', 'Mindestalter 14 Jahre'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 1, 'Schwimmen', 'TIME', '900', '400 m Schwimmen in höchstens 15 Minuten, davon 50 m Kraulschwimmen, 150 m Brustschwimmen und 200 m Schwimmen in Rückenlage mit Grätschschwung ohne Armtätigkeit'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Voraussetzung', 2, 'EH-Ausbildung', 'DOCUMENT', '2', 'Nachweis einer Erste Hilfe Ausbildung'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '720', '300 m Schwimmen in Kleidung in höchstens 12 Minuten, anschließend im Wasser entkleiden'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 3, '3-m-Sprung', 'NORMAL', NULL, 'Ein Sprung aus 3 m Höhe'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '25 m Streckentauchen'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 5, 'Tieftauchen', 'TIME', '180', 'dreimal Tieftauchen von der Wasseroberfläche, zweimal kopfwärts und einmal fußwärts innerhalb von 3 Minuten, mit dreimaligem Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes (Wassertiefe zwischen 3 und 5 m)'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 6, 'Transportschwimmen', 'TIME', '90', '50 m Transportschwimmen: Schieben oder Ziehen in höchstens 1:30 Minuten'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 8, 'Kleiderschleppen', 'TIME', '240', '50 m Schleppen in höchstens 4 Minuten, beide Partner in Kleidung, je eine Hälfte der Strecke mit Kopf- oder Achsel- und einem Fesselschleppgriff (Standard-Fesselschleppgriff oder Seemannsgriff)'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 9, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung, die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: Sprung kopfwärts ins Wasser; 20 m Anschwimmen in Bauchlage; Abtauchen auf 3 bis 5 m Tiefe, Heraufholen eines 5-kg-Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen; Lösen aus einer Umklammerung durch einen Befreiungsgriff; 25 m Schleppen; Sichern und Anlandbringen des Geretteten; 3 Minuten Durchführung der Herz-Lungen-Wiederbelebung (HLW)'),
+	('PO_01/01/2020', 'DRSA_SILBER', 'Praxis', 10, 'Rettungsgeräte', 'NORMAL', NULL, 'Handhabung und praktischer Einsatz eines Rettungsgerätes (z.B. Gurtretter, Wurfleine oder Rettungsring)'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Voraussetzung', 1, '16 Jahre', 'AGE', '16', 'Mindestalter 16 Jahre'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 1, 'Flossenschwimmen', 'TIME', '360', '300 m Flossenschwimmen in höchstens 6 Minuten, davon 250 m Bauch- oder Seitenlage und 50 m Schleppen , zu schleppender Partner in Kleidung (Kopf- und Achselgriff)'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Voraussetzung', 2, 'DRSA Silber', 'BADGE', 'DRSA_SILBER', 'Deutsches Rettungsschwimmabzeichen Silber'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 2, 'Kleiderschwimmen', 'TIME', '540', '300 m Schwimmen in Kleidung in höchstens 9 Minuten, anschließend im Wasser entkleiden'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Voraussetzung', 3, 'Selbsterklärung', 'DOCUMENT', '2', 'Ärtzliche Tauglichkeit (Die Selbsterklärung zum Gesundheitszustand muss vor Beginn vorliegen)'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 3, 'Schnellschwimmen', 'TIME', '100', '100 m Schwimmen in höchstens 1:40 Minuten'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Voraussetzung', 4, 'EH-Ausbildung', 'DOCUMENT', '2', 'Nachweis einer Erste Hilfe Ausbildung zur Ausstellung'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 4, 'Streckentauchen', 'NORMAL', NULL, '30 m Streckentauchen, dabei von 10 kleinen Ringen oder Tellern, die auf einer Strecke von 20 m in einer höchstens 2 m breiten Gasse verteilt sind, mindestens 8 Stück aufsammeln'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 5, 'K-Tieftauchen', 'TIME', '180', 'dreimal Tieftauchen in Kleidung innerhalb von 3 Minuten; das erste Mal mit einem Kopfsprung, anschließend je einmal kopf- und fußwärts von der Wasseroberfläche mit gleichzeitigem Heraufholen von jeweils zwei 5-kg-Tauchringen oder gleichartigen Gegenständen, die etwa 3 m voneinander entfernt liegen (Wassertiefe zwischen 3 und 5 m)'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 6, 'K-Transportschwimmen', 'TIME', '90', '50 m Transportschwimmen, beide Partner in Kleidung: Schieben oder Ziehen in höchstens 1:30 Minuten'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 7, 'Befreiungsgriffe', 'NORMAL', NULL, 'Fertigkeiten zur Vermeidung von Umklammerungen sowie zur Befreiung aus Halsumklammerung von hinten und Halswürgegriff von hinten'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 8, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung (beide Partner in Kleidung), die ohne Pause in der angegebenen Reihenfolge zu erfüllen ist: Sprung kopfwärts ins Wasser; 25 m Schwimmen in höchstens 30 Sekunden; Abtauchen auf 3 bis 5 m Tiefe und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, diesen anschließend fallen lassen; Lösen aus der Umklammerung durch einen Befreiungsgriff; 25 m Schleppen in höchstens 60 Sekunden mit einem Fesselschleppgriff; Sichern und Anlandbringen des Geretteten; 3 Minuten Durchf'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 9, 'Rettungsgeräte', 'NORMAL', NULL, 'Handhabung von Rettungsgeräten: Retten mit dem "Rettungsball mit Leine": Zielwerfen in einen Sektor mit 3-m-Öffnung in 12 m Entfernung: 6 Würfe innerhalb von 5 Minuten, davon 4 Treffer Retten mit einem anderen Rettungsgerät Retten mit Rettungsgurt Leine (als Schwimmer und Leinenführer)'),
+	('PO_01/01/2020', 'DRSA_GOLD', 'Praxis', 10, 'Hilfsmittel', 'NORMAL', NULL, 'Handhabung gebräuchlicher Hilfsmittel zur Wiederbelebung'),
+	('PO_01/01/2020', 'DSTA', 'Voraussetzung', 1, '12 Jahre', 'AGE', '12', 'Mindestalter 12 Jahre (bei Minderjährigen ist die Einverständniserklärung des Erziehungsberechtigten erforderlich)'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 1, '2-Flossenschwimmen', 'NORMAL', NULL, '600 m Flossenschwimmen ohne Zeitbegrenzung (je 200m Bauch-, Rücken- und Seitenlage)'),
+	('PO_01/01/2020', 'DSTA', 'Theorie', 1, 'Fragebogen', 'NORMAL', NULL, 'Bundeseinheitlicher Fragebogen'),
+	('PO_01/01/2020', 'DSTA', 'Voraussetzung', 2, 'Selbsterklärung', 'DOCUMENT', '2', 'Ärtzliche Tauglichkeit ((oder Formblatt "Selbsterklärung zum Gesundheitszustand") Tauchtauglichkeit nicht älter als 4 Wochen)'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 2, '1-Flossenschwimmen', 'NORMAL', NULL, '200 m Flossenschwimmen mit einer Flosse und Armbewegung'),
+	('PO_01/01/2020', 'DSTA', 'Voraussetzung', 3, 'DRSA Bronze', 'BADGE', 'DRSA_BRONZE', 'Deutsches Rettungsschwimmabzeichen Bronze'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 3, 'Streckentauchen', 'NORMAL', NULL, '30 m Streckentauchen ohne Startsprung'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 4, 'Zeittauchen', 'NORMAL', NULL, '30 Sekunden Zeittauchen (Festhalten erlaubt)'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 5, 'Ausblasen', 'NORMAL', NULL, 'in mindestens 3 m Tiefe Taucherbrille abnehmen, wieder aufsetzen und ausblasen'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 6, 'Tieftauchen', 'TIME', '60', 'dreimal innerhalb von einer Minute 3 m Tieftauchen'),
+	('PO_01/01/2020', 'DSTA', 'Praxis', 7, 'Fremdretten', 'NORMAL', NULL, 'Kombi-Übung: 50 m Flossenschwimmen in Bauchlage mit Armtätigkeit, einmal 3 bis 5 m Tieftauchen und Heraufholen eines 5 kg Tauchrings oder eines gleichartigen Gegenstandes, 50m Schleppen eines Partners, 3 Minuten Durchführen der Herz-Lungen-Wiederbelebung (HLW)');
 /*!40000 ALTER TABLE `discipline_list` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.participant
@@ -192,18 +198,18 @@ CREATE TABLE IF NOT EXISTS `participant` (
   PRIMARY KEY (`id`),
   KEY `FK_participant_user` (`added_by_user_id`),
   CONSTRAINT `FK_participant_user` FOREIGN KEY (`added_by_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8mb4;
 
 -- Exportiere Daten aus Tabelle liquidb.participant: ~103 rows (ungefähr)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `address`, `post_code`, `city`, `note`, `added_by_user_id`) VALUES
 	(1, 'Tim Teilnehmer', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1),
-	(4, 'Susi Schwimmer', NULL, '2000-06-21', 'Samplecity', 'Am Weg 16', '35849', 'Steinberg', 'Tolle Notiz!\r\nNeue Zeile', 1),
-	(6, 'Frauke Fröhlich', NULL, '2001-12-12', 'London', 'Bahnhofstrasse 1', '52825', 'Münster', 'Allergie gegen Chlor\r\nTel.: 05728 3985', 1),
+	(4, 'Susi Schwiüßmmer', 'w', '2000-06-21', 'Sampläecity', 'Am Wäeg 16', '05849', 'Steiänberg', 'Tolle Notiz!\r\nNeue Zeileä', 1),
+	(6, 'Frauke Fröhlich', NULL, '2005-01-17', 'London', 'Bahnhofstrasse 1', '52825', 'Münster', 'Allergie gegen Chlor\r\nTel.: 05728 3985', 1),
 	(7, 'Eryn Chadwick', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(8, 'Aisha Lunt', 'w', NULL, NULL, NULL, NULL, NULL, 'Vitae id possimus quisquam ab sapiente molestias amet. Quia nihil praesentium quia voluptatem soluta ullam. Deserunt numquam beatae non consequatur velit. Beatae sequi repellat earum eveniet.\r\nSequi vel sit aut sunt consequatur sed. Dolore dolorem qui doloribus ut.', 1),
 	(9, 'Owen Pratt', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
-	(10, 'Abdul Forester', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
+	(10, 'Abdul-Kai Forester', 'm', '2000-10-04', 'Ulster', 'Kaufstraße 12c', '74635', 'Orthausen', 'Erreichbar unter 02938 748564\r\nSchwierigkeiten mit Streckentauchen', 1),
 	(11, 'Ronald Warren', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(12, 'Julius Utterson', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
 	(13, 'Sebastian Wills', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1),
@@ -302,6 +308,28 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(106, 'Nick Appleton', 'm', NULL, 'Portland', NULL, NULL, NULL, NULL, 1);
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
+-- Exportiere Struktur von Tabelle liquidb.regulation
+CREATE TABLE IF NOT EXISTS `regulation` (
+  `name_internal` varchar(50) NOT NULL,
+  `date` date NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `name_short` varchar(50) NOT NULL,
+  `description` int(11) DEFAULT NULL,
+  PRIMARY KEY (`name_internal`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Exportiere Daten aus Tabelle liquidb.regulation: ~0 rows (ungefähr)
+/*!40000 ALTER TABLE `regulation` DISABLE KEYS */;
+INSERT INTO `regulation` (`name_internal`, `date`, `name`, `name_short`, `description`) VALUES
+	('PO_01/01/2020', '2020-01-01', 'Prüfungsordnung 2020 1. Auflage', 'PO 2020 1', NULL);
+/*!40000 ALTER TABLE `regulation` ENABLE KEYS */;
+
+-- Exportiere Struktur von View liquidb.regulation_current
+-- Erstelle temporäre Tabelle um View Abhängigkeiten zuvorzukommen
+CREATE TABLE `regulation_current` (
+	`name_internal` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci'
+) ENGINE=MyISAM;
+
 -- Exportiere Struktur von Tabelle liquidb.user
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -322,11 +350,16 @@ CREATE TABLE IF NOT EXISTS `user` (
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`id`, `username`, `name`, `salt`, `pw_hash`, `pw_changed`, `pw_must_change`, `ist_trainer`, `ist_admin`) VALUES
 	(1, 'system', 'System', 'cGYF)ma?2aPQ0]}&kjBY:Opxw#nm$9i|', 'AFB3E303AD2F243ED3F720B87CAE4CFAC676DAC8C3162F22F2314C471C380D7E', '2020-01-09 18:44:59', 0, 1, 1),
-	(2, 'mozi_h', NULL, 'UDru)YD8_WZ5hZY|:nAf,A%1hV0<s|~-', 'E3B623D2EF7A76E02AA37861D5541372177D10B4A1F0715FD1D93DA6D5DD1EFE', '2020-01-11 17:58:50', 0, 0, 1),
+	(2, 'mozi_h', NULL, 'yDJGImcfbF]|oupK 3hI+g9*{VpBR1I3', 'CFD0CC60692414F18D0BE12F044595C73C34E92D32DF301A9E128A1A72BC7B24', '2020-01-17 09:03:06', 0, 1, 1),
 	(3, 'marv', 'Marvin', 'CmG?WU7$3O4n#P=N1762#g_FYD >(Oy-', '9ABF1B211FFF73B8D288DBCB32B06ED2B690D3181252252507803AA601CB8620', '2020-01-09 17:53:01', 0, 1, 0),
-	(4, 'alex', 'Alex Muster', 'fu{q A5eQFE1FhSfLX;[XBFic(CAJ%Xf', '84BE7BA4B7F2A479A5272B4CFA237FD3C1DFFDAD2B0C8D01E52F7639EBAD59C3', '2020-01-09 17:28:33', 0, 0, 1),
+	(4, 'alex', NULL, ':n:Ygfv&MmY6#,<jRMH%70nbL$gisgvw', '5B606CC0258C65970DF3D52A0BB7CFFCD974C95336025DD3C2A7D3FB0C0AF958', '2020-01-17 12:30:18', 0, 0, 1),
 	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', '47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7', '2020-01-09 17:55:42', 0, 1, 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
+
+-- Exportiere Struktur von View liquidb.regulation_current
+-- Entferne temporäre Tabelle und erstelle die eigentliche View
+DROP TABLE IF EXISTS `regulation_current`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `regulation_current` AS select `regulation`.`name_internal` AS `name_internal` from `regulation` where `regulation`.`date` = (select max(`regulation`.`date`) from `regulation`);
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

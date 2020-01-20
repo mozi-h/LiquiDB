@@ -14,7 +14,7 @@
 <body>
   <?= get_nav("admin") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-plus"> Neuer Benutzer</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-plus">Neuer Benutzer</h1>
 
     <?= catch_alert() ?>
     <div class="card">
@@ -28,7 +28,7 @@
           <div class="input-group  mb-2 mr-sm-2">
             <input type="text" class="form-control" required minlength=8 maxlength=200 id="pw" name="pw" id="pw" placeholder="Initialpasswort">
             <div class="input-group-append">
-              <button class="btn btn-info hint" type="button" data-toggle="tooltip" data-placement="top" title="Zufall" onclick="random_password()"><span class="mdi mdi-dice-multiple"></span></button>
+              <button class="btn btn-info" type="button" data-toggle="tooltip" data-placement="top" title="Zufall" onclick="random_password()"><span class="mdi mdi-dice-multiple"></span></button>
             </div>
           </div>
           <button type="submit" class="btn btn-success mb-2">Hinzufügen</button>

@@ -6,7 +6,7 @@
   restricted("Trainer");
 
   // TEILNEHMERDATEN
-  $query = "SELECT p.id, p.name, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note
+  $query = "SELECT p.id, p.name, p.gender, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note
             FROM participant AS p";
             $result = mysqli_query($db, $query);
 
@@ -14,7 +14,8 @@
   while($row = mysqli_fetch_array($result)) {
     $tmp = [];
     $tmp["id"] = $row["id"];
-    $tmp["name"] = escape($row["name"]) ?? "";
+    $tmp["name"] = escape($row["name"]);
+    $tmp["gender"] = $row["gender"];
     $tmp["birthday"] = escape($row["birthday_formatted"]) ?? "";
     $tmp["age"] = escape($row["age"]) ?? "";
     $tmp["city"] = escape($row["city"]) ?? "";
