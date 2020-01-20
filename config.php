@@ -12,6 +12,9 @@
   /** MySQL Datenbank Datenbanken-Name */
   define("DB_NAME", "liquidb");
 
+  /** MySQL Datenbank Datenbanken-Name */
+  define("DB_PORT", "3306");
+
   /** Zeitzone */
   define("TIMEZONE", "Europe/Berlin");
 
@@ -25,7 +28,7 @@
   define("ABSPATH", dirname(__FILE__) . "/");
   
   /** Datenbank-Verbindung */
-  $db = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+  $db = mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
   if(!$db) {
     echo "FEHLER MIT DER DATENBANKENVERBINDUNG:<br>";
     echo mysqli_connect_error();
