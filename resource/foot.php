@@ -8,6 +8,9 @@
 <script src="<?= RELPATH ?>vendor/bootstrap.min.js"></script>
 <!--Bootstrap Datepicker JS-->
 <script src="<?= RELPATH ?>vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<!--Bootstrap Select JS-->
+<script src="<?= RELPATH ?>vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
+<script src="<?= RELPATH ?>vendor/bootstrap-select/js/i18n/defaults-de_DE.min.js"></script>
 
 <?php
   if($load_bootstrap_table) { ?>
