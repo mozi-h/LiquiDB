@@ -4,9 +4,6 @@
 
   restricted("Trainer");
 
-  //var_dump($_POST);
-  //die();
-
   /** Ziel für Alerts */
   $target = RELPATH . "abzeichen/teilnehmer-neu.php";
 
@@ -26,7 +23,20 @@
     // Zu lang
     send_alert($target, "warning", "Name zu lang (max 50 Zeichen)", False, $_POST);
   }
-  // Nutzername valid
+  // Name valid
+
+  // Geschlecht validieren
+  // - nicht gegeben
+  // ODER
+  // - m, w oder d
+  $_POST["gender"] = trim($_POST["gender"] ?? "");
+  if(empty($_POST["gender"])) {
+    // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["gender"]);
+  }
+  elseif(!preg_match("/^[mwd]$/", $_POST["gender"])) {
+    send_alert($target, "warning", "Geschlecht kann nur m w oder d sein.", False, $_POST);
+  }
 
   // Geburtsdatum validieren
   // - nicht gegeben
@@ -138,8 +148,9 @@
 
   // Eintrag in die Datenbank tun
   $query = sprintf(
-    "INSERT INTO participant(name, birthday, birthplace, address, post_code, city, note) VALUE ('%s', %s, %s, %s, %s, %s, %s)",
+    "INSERT INTO participant(name, gender, birthday, birthplace, address, post_code, city, note) VALUE ('%s', %s, %s, %s, %s, %s, %s, %s)",
     mysqli_real_escape_string($db, $_POST["name"]),
+    mysql_escape_or_null($_POST["gender"] ?? NULL),
     mysql_escape_or_null($_POST["birthday"] ?? NULL),
     mysql_escape_or_null($_POST["birthplace"] ?? NULL),
     mysql_escape_or_null($_POST["address"] ?? NULL),
@@ -149,7 +160,7 @@
   );
   if(!mysqli_query($db, $query)) {
     // Fehler beim Query
-    send_alert($target, "danger", "Fehler: " . mysqli_error($db));
+    send_alert($target, "danger", "Fehler: " . mysqli_error($db), False, $_POST);
   }
   send_alert($target, "success", "Teilnehmer hinzugefügt");
 ?>

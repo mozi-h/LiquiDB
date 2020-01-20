@@ -30,17 +30,30 @@
   $_POST["name"] = trim($_POST["name"] ?? "");
   if(empty($_POST["name"])) {
     // Nicht gegeben oder nur Leerzeichen
-    send_alert($target, "warning", "Kein Name gegeben", False, $_POST);
+    send_alert($target, "warning", "Kein Name gegeben");
   }
   elseif(strlen($_POST["name"]) < 5) {
     // Zu kurz
-    send_alert($target, "warning", "Name zu kurz (min 5 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Name zu kurz (min 5 Zeichen)");
   }
   elseif(strlen($_POST["name"]) > 50) {
     // Zu lang
-    send_alert($target, "warning", "Name zu lang (max 50 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Name zu lang (max 50 Zeichen)");
   }
-  // Nutzername valid
+  // Name valid
+
+  // Geschlecht validieren
+  // - nicht gegeben
+  // ODER
+  // - m, w oder d
+  $_POST["gender"] = trim($_POST["gender"] ?? "");
+  if(empty($_POST["gender"])) {
+    // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["gender"]);
+  }
+  elseif(!preg_match("/^[mwd]$/", $_POST["gender"])) {
+    send_alert($target, "warning", "Geschlecht kann nur m w oder d sein.");
+  }
 
   // Geburtsdatum validieren
   // - nicht gegeben
@@ -61,11 +74,11 @@
 
     if($age < 2) {
       // Zu jung
-      send_alert($target, "warning", "Zu jung (min 2 Jahre alt)", False, $_POST);
+      send_alert($target, "warning", "Zu jung (min 2 Jahre alt)");
     }
     elseif($age > 100) {
       // Zu alt
-      send_alert($target, "warning", "Zu alt (max 100 Jahre alt)", False, $_POST);
+      send_alert($target, "warning", "Zu alt (max 100 Jahre alt)");
     }
     // Geburtsdatum gegeben und valid
   }
@@ -81,7 +94,7 @@
   }
   elseif(strlen($_POST["name"]) > 50) {
     // Zu lang
-    send_alert($target, "warning", "Geburtsort zu lang (max 50 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Geburtsort zu lang (max 50 Zeichen)");
   }
   // Geburtsort valid
 
@@ -96,11 +109,11 @@
   }
   elseif(strlen($_POST["address"]) < 5) {
     // Zu kurz
-    send_alert($target, "warning", "Adresse zu kurz (min 5 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Adresse zu kurz (min 5 Zeichen)");
   }
   elseif(strlen($_POST["address"]) > 50) {
     // Zu lang
-    send_alert($target, "warning", "Adresse zu lang (max 50 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Adresse zu lang (max 50 Zeichen)");
   }
   // Adresse valid
 
@@ -115,7 +128,7 @@
   }
   elseif(!preg_match("/[0-9]{5}/", $_POST["post_code"])) {
     // Nicht 5 lang
-    send_alert($target, "warning", "Postleitzahl ungültig (nur 5 Ziffern erlaubt)", False, $_POST);
+    send_alert($target, "warning", "Postleitzahl ungültig (nur 5 Ziffern erlaubt)");
   }
   // Postleitzahl valid
 
@@ -130,7 +143,7 @@
   }
   elseif(strlen($_POST["city"]) > 50) {
     // Zu lang
-    send_alert($target, "warning", "Ort zu lang (max 50 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Ort zu lang (max 50 Zeichen)");
   }
   // Ort valid
 
@@ -145,14 +158,15 @@
   }
   elseif(strlen($_POST["note"]) > 500) {
     // Zu lang
-    send_alert($target, "warning", "Notiz zu lang (max 500 Zeichen)", False, $_POST);
+    send_alert($target, "warning", "Notiz zu lang (max 500 Zeichen)");
   }
   // Notiz valid
 
   // Eintrag in der Datenbank aktualisieren
   $query = sprintf(
-    "UPDATE participant SET name = '%s', birthday = %s, birthplace = %s, address = %s, post_code = %s, city = %s, note = %s WHERE id = %d",
+    "UPDATE participant SET name = '%s', gender = %s, birthday = %s, birthplace = %s, address = %s, post_code = %s, city = %s, note = %s WHERE id = %d",
     mysqli_real_escape_string($db, $_POST["name"]),
+    mysql_escape_or_null($_POST["gender"] ?? NULL),
     mysql_escape_or_null($_POST["birthday"] ?? NULL),
     mysql_escape_or_null($_POST["birthplace"] ?? NULL),
     mysql_escape_or_null($_POST["address"] ?? NULL),

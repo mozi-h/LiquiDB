@@ -40,9 +40,24 @@
     <div class="card mb-3">
       <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/teilnehmer-bearbeiten-senden.php?id=<?= $participant["id"] ?>">
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-4">
             <label for="name">Name</label>
             <input type="text" class="form-control" name="name" id="name" required minlength=5 maxlength=50 placeholder="Max Muster (Pflichtfeld)" value="<?= $participant["name_esc"] ?>">
+          </div>
+          <div class="form-group col-md-2 ">
+            <label for="gender">Geschlecht</label>
+            <select class="selectpicker form-control" data-style="custom-select" name="gender" id="gender" title="Auswählen...">
+              <?php
+                $form_gender = [$participant["gender"] => "selected"];
+              ?>
+              <option class="mdi mdi-gender-male" value="m" <?= $form_gender["m"] ?? "" ?>>Männlich</option>
+              <option class="mdi mdi-gender-female" value="w" <?= $form_gender["w"] ?? "" ?>>Weiblich</option>
+              <option class="mdi mdi-gender-non-binary" value="d" <?= $form_gender["d"] ?? "" ?>>Divers</option>
+              <?php if(!empty($participant["gender"])) { ?>
+                <option data-divider="true"></option>
+                <option class="mdi mdi-trash-can-outline" value="">Entfernen</option>
+              <?php } ?>
+            </select>
           </div>
           <div id="datepicker-container" class="form-group col-md-3">
             <label for="birthday">Geburtsdatum</label>

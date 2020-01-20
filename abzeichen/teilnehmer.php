@@ -33,7 +33,7 @@
       data-detail-view-by-click="true"
       data-detail-formatter="detailFormatter">
       <thead class="thead-dark">
-        <th data-field="name" data-sortable="true">Name</th>
+        <th data-field="name" data-sortable="true" data-formatter="genderFormatter">Name</th>
         <th class="d-none d-md-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
         <th data-field="age" data-sortable="true">Alter</th>
         <th class="d-none d-sm-table-cell" data-field="city" data-sortable="true">Ort</th>
@@ -50,6 +50,19 @@
     // Detail-Funktion leitet zur Bearbeiten-Seite weiter
     function detailFormatter(index, row) {
       window.location.href = "<?= RELPATH ?>abzeichen/teilnehmer-bearbeiten.php?id=" + row["id"];
+    }
+
+    // Zeigt Gender-Symbol vor Namen an, wenn gegeben
+    var gender_styles = {
+      m: "gender-male",
+      w: "gender-female",
+      d: "gender-non-binary"
+    };
+    function genderFormatter(value, row) {
+      if(row["gender"] != null) {
+        return "<span class='mdi mdi-" + gender_styles[row["gender"]] + "'></span>" + value
+      }
+      return value;
     }
   </script>
 </body>

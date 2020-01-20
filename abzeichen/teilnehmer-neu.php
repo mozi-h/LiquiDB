@@ -20,14 +20,26 @@
     <div class="card">
       <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/teilnehmer-neu-senden.php">
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-4">
             <label for="name">Name</label>
             <input type="text" class="form-control" name="name" id="name" required minlength=5 maxlength=50 placeholder="Max Muster (Pflichtfeld)" <?= get_fill_form("name") ?>>
+          </div>
+          <div class="form-group col-md-2 ">
+            <label for="gender">Geschlecht</label>
+            <select class="selectpicker form-control" data-style="custom-select" name="gender" id="gender" title="Auswählen...">
+              <?php
+                $fill_form_gender = get_fill_form("gender", True);
+                $fill_form_gender = [$fill_form_gender => "selected"];
+              ?>
+              <option class="mdi mdi-gender-male" value="m" <?= $fill_form_gender["m"] ?? "" ?>>Männlich</option>
+              <option class="mdi mdi-gender-female" value="w" <?= $fill_form_gender["w"] ?? "" ?>>Weiblich</option>
+              <option class="mdi mdi-gender-non-binary" value="d" <?= $fill_form_gender["d"] ?? "" ?>>Divers</option>
+            </select>
           </div>
           <div id="datepicker-container" class="form-group col-md-3">
             <label for="birthday">Geburtsdatum</label>
             <div class="input-group date">
-              <input type="text" class="form-control" name="birthday" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ">
+              <input type="text" class="form-control" name="birthday" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" <?= get_fill_form("birthday") ?>>
               <div class="input-group-append input-group-addon">
                 <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
               </div>
