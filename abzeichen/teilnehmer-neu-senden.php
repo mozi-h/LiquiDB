@@ -38,6 +38,19 @@
     send_alert($target, "warning", "Geschlecht kann nur m w oder d sein.", False, $_POST);
   }
 
+  // Geschlecht validieren
+  // - nicht gegeben
+  // ODER
+  // - m, w oder d
+  $_POST["gender"] = trim($_POST["gender"] ?? "");
+  if(empty($_POST["gender"])) {
+    // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["gender"]);
+  }
+  elseif(!preg_match("/^[mwd]$/", $_POST["birthday"])) {
+    send_alert($target, "warning", "Geschlecht kann nur m w oder d sein.");
+  }
+
   // Geburtsdatum validieren
   // - nicht gegeben
   // ODER
