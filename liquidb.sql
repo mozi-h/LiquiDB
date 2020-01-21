@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `regulation` (
   PRIMARY KEY (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.regulation: ~0 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.regulation: ~1 rows (ungefähr)
 /*!40000 ALTER TABLE `regulation` DISABLE KEYS */;
 INSERT INTO `regulation` (`name_internal`, `date`, `name`, `name_short`, `description`) VALUES
 	('PO_01/01/2020', '2020-01-01', 'Prüfungsordnung 2020 1. Auflage', 'PO 2020 1', NULL);
@@ -337,7 +337,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name` varchar(50) DEFAULT NULL,
   `display_name` varchar(50) GENERATED ALWAYS AS (if(`name` is not null,`name`,`username`)) VIRTUAL,
   `salt` varchar(32) NOT NULL,
-  `pw_hash` varchar(64) NOT NULL DEFAULT '',
+  `pw_hash_bin` varbinary(256) NOT NULL,
+  `pw_hash` varchar(64) GENERATED ALWAYS AS (hex(`pw_hash_bin`)) VIRTUAL,
   `pw_changed` datetime DEFAULT NULL,
   `pw_must_change` tinyint(1) NOT NULL DEFAULT 1,
   `ist_trainer` tinyint(1) NOT NULL DEFAULT 0,
@@ -348,12 +349,12 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 -- Exportiere Daten aus Tabelle liquidb.user: ~5 rows (ungefähr)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`id`, `username`, `name`, `salt`, `pw_hash`, `pw_changed`, `pw_must_change`, `ist_trainer`, `ist_admin`) VALUES
-	(1, 'system', 'System', 'cGYF)ma?2aPQ0]}&kjBY:Opxw#nm$9i|', 'AFB3E303AD2F243ED3F720B87CAE4CFAC676DAC8C3162F22F2314C471C380D7E', '2020-01-09 18:44:59', 0, 1, 1),
-	(2, 'mozi_h', NULL, 'yDJGImcfbF]|oupK 3hI+g9*{VpBR1I3', 'CFD0CC60692414F18D0BE12F044595C73C34E92D32DF301A9E128A1A72BC7B24', '2020-01-17 09:03:06', 0, 1, 1),
-	(3, 'marv', 'Marvin', 'CmG?WU7$3O4n#P=N1762#g_FYD >(Oy-', '9ABF1B211FFF73B8D288DBCB32B06ED2B690D3181252252507803AA601CB8620', '2020-01-09 17:53:01', 0, 1, 0),
-	(4, 'alex', NULL, ':n:Ygfv&MmY6#,<jRMH%70nbL$gisgvw', '5B606CC0258C65970DF3D52A0BB7CFFCD974C95336025DD3C2A7D3FB0C0AF958', '2020-01-17 12:30:18', 0, 0, 1),
-	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', '47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7', '2020-01-09 17:55:42', 0, 1, 0);
+INSERT INTO `user` (`id`, `username`, `name`, `salt`, `pw_hash_bin`, `pw_changed`, `pw_must_change`, `ist_trainer`, `ist_admin`) VALUES
+	(1, 'system', 'System', 'cGYF)ma?2aPQ0]}&kjBY:Opxw#nm$9i|', _binary 0xAFB3E303AD2F243ED3F720B87CAE4CFAC676DAC8C3162F22F2314C471C380D7E, '2020-01-09 18:44:59', 0, 1, 1),
+	(2, 'mozi_h', NULL, 'S.;s%%1nd:*Xo/YUR$Jo-(ou&EUU.w8_', _binary 0x5ED266089B51128FD71E577B8D7792B338C83C82DB795E0AC756E8AF20A5C1A6, '2020-01-21 10:21:45', 0, 1, 1),
+	(3, 'marv', 'Marvin', 'CmG?WU7$3O4n#P=N1762#g_FYD >(Oy-', _binary 0x9ABF1B211FFF73B8D288DBCB32B06ED2B690D3181252252507803AA601CB8620, '2020-01-09 17:53:01', 0, 1, 0),
+	(4, 'alex', NULL, ':n:Ygfv&MmY6#,<jRMH%70nbL$gisgvw', _binary 0x5B606CC0258C65970DF3D52A0BB7CFFCD974C95336025DD3C2A7D3FB0C0AF958, '2020-01-17 12:30:18', 0, 0, 1),
+	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', _binary 0x47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7, '2020-01-09 17:55:42', 0, 1, 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 -- Exportiere Struktur von View liquidb.regulation_current

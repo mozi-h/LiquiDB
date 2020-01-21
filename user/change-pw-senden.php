@@ -51,7 +51,7 @@
     $pw_hash = hash_password($salt, $_POST["pw-neu"]);
 
     $query = sprintf(
-      "UPDATE user SET salt = '%s', pw_hash = '%s', pw_changed = NOW(), pw_must_change = 0 WHERE id = %d",
+      "UPDATE user SET salt = '%s', pw_hash_bin = UNHEX('%s'), pw_changed = NOW(), pw_must_change = 0 WHERE id = %d",
       mysqli_real_escape_string($db, $salt),
       $pw_hash,
       $user["id"]
@@ -60,7 +60,8 @@
       // fehler beim Query
       send_alert($target, "danger", "Fehler: " . mysqli_error($db));
     }
-    $_SESSION["USER_LOGINTIME"] = time() + 5;
+    // Host, der PW geändert hat, soll eingeloggt bleiben (Sitzung nicht ablaufen)
+    $_SESSION["USER_LOGINTIME"] = time() + 30;
     send_alert($target, "success", "Passwort geändert");
   }
 ?>
