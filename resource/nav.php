@@ -5,10 +5,10 @@
   <li class="nav-item bg-light">
     <a class="nav-link <?= $tab["index"] ?? "" ?>" href="<?= RELPATH ?>index.php">Home</a>
   </li>
-  <!--li class="nav-item">
+  <li class="nav-item">
     <a class="nav-link <?= $tab["vorlage"] ?? "" ?>" href="<?= RELPATH ?>resource/vorlage.php">Vorlage</a>
   </li>
-  <li class="nav-item">
+  <!--li class="nav-item">
     <a class="nav-link disabled" href="#">Disabled</a>
   </li-->
   <?php

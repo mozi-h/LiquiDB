@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         mozi-h.hopto.org
+-- Host:                         192.168.178.43
 -- Server Version:               10.3.17-MariaDB-0+deb10u1 - Raspbian 10
 -- Server Betriebssystem:        debian-linux-gnueabihf
 -- HeidiSQL Version:             10.3.0.5771
@@ -15,6 +15,40 @@
 -- Exportiere Datenbank Struktur für liquidb
 CREATE DATABASE IF NOT EXISTS `liquidb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `liquidb`;
+
+-- Exportiere Struktur von Tabelle liquidb.attendance
+CREATE TABLE IF NOT EXISTS `attendance` (
+  `date` date NOT NULL DEFAULT cast(current_timestamp() as date),
+  `participant_id` int(10) unsigned NOT NULL,
+  `other_amount` tinyint(3) unsigned DEFAULT NULL,
+  `paid` enum('Yes','No','Other') NOT NULL COMMENT 'Yes: gezahlt\r\nNo: nicht gezahlen / muss nicht zahlen\r\nOther: andere Regelung (z.B. Jahreskarte)',
+  `author_user_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`date`,`participant_id`),
+  KEY `FK_attendance_participant` (`participant_id`),
+  KEY `FK_attendance_user` (`author_user_id`),
+  CONSTRAINT `FK_attendance_participant` FOREIGN KEY (`participant_id`) REFERENCES `participant` (`id`),
+  CONSTRAINT `FK_attendance_user` FOREIGN KEY (`author_user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Pro Datum kann je Zeile entweder:\r\nparticipant_id und ob/wie gezahlt wurde\r\nODER\r\nother_amount -> nicht als participant vorhandene anzahl anderer personen, die ob/wie gezahlt haben';
+
+-- Exportiere Daten aus Tabelle liquidb.attendance: ~2 rows (ungefähr)
+/*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
+INSERT INTO `attendance` (`date`, `participant_id`, `other_amount`, `paid`, `author_user_id`) VALUES
+	('2020-01-20', 10, NULL, 'Yes', 1),
+	('2020-01-21', 1, NULL, 'Other', 2),
+	('2020-01-21', 4, NULL, 'Yes', 2),
+	('2020-01-21', 6, NULL, 'Yes', 2),
+	('2020-01-21', 8, NULL, 'No', 2),
+	('2020-01-21', 9, NULL, 'No', 2),
+	('2020-01-21', 10, NULL, 'Yes', 1),
+	('2020-01-21', 22, NULL, 'Other', 2);
+/*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
+
+-- Exportiere Struktur von View liquidb.attendance_today_not
+-- Erstelle temporäre Tabelle um View Abhängigkeiten zuvorzukommen
+CREATE TABLE `attendance_today_not` (
+	`id` INT(10) UNSIGNED NOT NULL,
+	`name` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci'
+) ENGINE=MyISAM;
 
 -- Exportiere Struktur von Tabelle liquidb.badge
 CREATE TABLE IF NOT EXISTS `badge` (
@@ -318,7 +352,7 @@ CREATE TABLE IF NOT EXISTS `regulation` (
   PRIMARY KEY (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.regulation: ~1 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.regulation: ~0 rows (ungefähr)
 /*!40000 ALTER TABLE `regulation` DISABLE KEYS */;
 INSERT INTO `regulation` (`name_internal`, `date`, `name`, `name_short`, `description`) VALUES
 	('PO_01/01/2020', '2020-01-01', 'Prüfungsordnung 2020 1. Auflage', 'PO 2020 1', NULL);
@@ -356,6 +390,11 @@ INSERT INTO `user` (`id`, `username`, `name`, `salt`, `pw_hash_bin`, `pw_changed
 	(4, 'alex', NULL, ':n:Ygfv&MmY6#,<jRMH%70nbL$gisgvw', _binary 0x5B606CC0258C65970DF3D52A0BB7CFFCD974C95336025DD3C2A7D3FB0C0AF958, '2020-01-17 12:30:18', 0, 0, 1),
 	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', _binary 0x47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7, '2020-01-09 17:55:42', 0, 1, 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
+
+-- Exportiere Struktur von View liquidb.attendance_today_not
+-- Entferne temporäre Tabelle und erstelle die eigentliche View
+DROP TABLE IF EXISTS `attendance_today_not`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `attendance_today_not` AS select `p`.`id` AS `id`,`p`.`name` AS `name` from `participant` `p` where !(`p`.`id` in (select `p`.`id` from (`participant` `p` left join `attendance` `a` on(`p`.`id` = `a`.`participant_id`)) where `a`.`date` = cast(current_timestamp() as date)));
 
 -- Exportiere Struktur von View liquidb.regulation_current
 -- Entferne temporäre Tabelle und erstelle die eigentliche View
