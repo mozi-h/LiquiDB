@@ -16,6 +16,24 @@
 CREATE DATABASE IF NOT EXISTS `liquidb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `liquidb`;
 
+-- Exportiere Struktur von Tabelle liquidb.attendance
+CREATE TABLE IF NOT EXISTS `attendance` (
+  `date` date NOT NULL,
+  `participant_id` int(10) unsigned DEFAULT NULL,
+  `other_amount` tinyint(3) unsigned DEFAULT NULL,
+  `paid` enum('Yes','No','Other') NOT NULL COMMENT 'Yes: gezahlt\r\nNo: nicht gezahlen / muss nicht zahlen\r\nOther: andere Regelung (z.B. Jahreskarte)',
+  PRIMARY KEY (`date`),
+  KEY `FK_attendance_participant` (`participant_id`),
+  CONSTRAINT `FK_attendance_participant` FOREIGN KEY (`participant_id`) REFERENCES `participant` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Pro Datum kann je Zeile entweder:\r\nparticipant_id und ob/wie gezahlt wurde\r\nODER\r\nother_amount -> nicht als participant vorhandene anzahl anderer personen, die ob/wie gezahlt haben';
+
+-- Exportiere Daten aus Tabelle liquidb.attendance: ~0 rows (ungefähr)
+/*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
+INSERT INTO `attendance` (`date`, `participant_id`, `other_amount`, `paid`) VALUES
+	('2020-01-20', 10, NULL, 'Yes'),
+	('2020-01-21', 10, NULL, 'Yes');
+/*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
+
 -- Exportiere Struktur von Tabelle liquidb.badge
 CREATE TABLE IF NOT EXISTS `badge` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -318,7 +336,7 @@ CREATE TABLE IF NOT EXISTS `regulation` (
   PRIMARY KEY (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.regulation: ~1 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.regulation: ~0 rows (ungefähr)
 /*!40000 ALTER TABLE `regulation` DISABLE KEYS */;
 INSERT INTO `regulation` (`name_internal`, `date`, `name`, `name_short`, `description`) VALUES
 	('PO_01/01/2020', '2020-01-01', 'Prüfungsordnung 2020 1. Auflage', 'PO 2020 1', NULL);
