@@ -23,6 +23,10 @@
     send_alert($target, "warning", "ID ist kein Teilnehmer");
   }
   $participant = get_participant($_GET["id"]);
+
+  // Gruppen
+  $query = "SELECT id, name FROM `group`";
+  $group_result = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -55,7 +59,7 @@
               <option class="mdi mdi-gender-non-binary" value="d" <?= $form_gender["d"] ?? "" ?>>Divers</option>
               <?php if(!empty($participant["gender"])) { ?>
                 <option data-divider="true"></option>
-                <option class="mdi mdi-trash-can-outline" value="">Entfernen</option>
+                <option class="mdi mdi-trash-can-outline" value="remove">Entfernen</option>
               <?php } ?>
             </select>
           </div>
@@ -74,7 +78,24 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-2 ">
+            <label for="group">Gruppe</label>
+            <select class="selectpicker form-control" data-style="custom-select" name="group" id="group" title="Auswählen...">
+              <?php
+                while($row = mysqli_fetch_array($group_result)) {
+                  $form_group = [$participant["group_id"] => "selected"];
+                  ?>
+                  <option value="<?= $row["id"] ?>" <?= $form_group[$row["id"]] ?? "" ?>><?= $row["name"] ?></option>
+                  <?php 
+                }
+                if(!empty($participant["group_id"])) { ?>
+                  <option data-divider="true"></option>
+                  <option class="mdi mdi-trash-can-outline" value="remove">Entfernen</option>
+                <?php }
+              ?>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
             <label for="address">Straße, Nr</label>
             <input type="text" class="form-control" name="address" id="address" minlength=5 maxlength=50 placeholder="Am Beispielweg 14" value="<?= $participant["address_esc"] ?>">
           </div>

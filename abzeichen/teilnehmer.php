@@ -34,10 +34,11 @@
       data-detail-formatter="detailFormatter">
       <thead class="thead-dark">
         <th data-field="name" data-sortable="true" data-formatter="genderFormatter">Name</th>
-        <th class="d-none d-md-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
+        <th data-field="group" data-sortable="true">Gruppe</th>
+        <th class="d-none d-lg-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
         <th data-field="age" data-sortable="true">Alter</th>
-        <th class="d-none d-sm-table-cell" data-field="city" data-sortable="true">Ort</th>
-        <th data-field="note" data-sortable="true">Notiz</th>
+        <th class="d-none d-md-table-cell" data-field="city" data-sortable="true">Ort</th>
+        <th class="d-none d-sm-table-cell" data-field="note" data-sortable="true">Notiz</th>
       </thead>
     </table>
     <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">

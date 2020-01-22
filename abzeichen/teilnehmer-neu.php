@@ -3,6 +3,10 @@
   set_relpath(1);
 
   restricted("Trainer");
+
+  // Gruppen
+  $query = "SELECT id, name FROM `group`";
+  $group_result = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -51,7 +55,19 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-2 ">
+            <label for="group">Gruppe</label>
+            <select class="selectpicker form-control" data-style="custom-select" name="group" id="group" title="Auswählen...">
+              <?php
+                while($row = mysqli_fetch_array($group_result)) {
+                  ?>
+                  <option value="<?= $row["id"] ?>"><?= $row["name"] ?></option>
+                  <?php
+                }
+              ?>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
             <label for="address">Straße, Nr</label>
             <input type="text" class="form-control" name="address" id="address" minlength=5 maxlength=50 placeholder="Am Beispielweg 14" <?= get_fill_form("address") ?>>
           </div>

@@ -95,6 +95,30 @@
   }
   // Geburtsort valid
 
+  // Gruppe validieren
+  // - nicht gegeben
+  // ODER
+  // - Int
+  // - existierende Gruppen-ID
+  $_POST["group"] = trim($_POST["group"] ?? "");
+  if(empty($_POST["group"])) {
+    // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["group"]);
+  }
+  elseif(!filter_var($_POST["group"], FILTER_VALIDATE_INT)) {
+    // Kein Int
+    send_alert($target, "warning", "Gruppe ist kein Int");
+  }
+  else {
+    $_POST["group"] = intval($_POST["group"]);
+    $query = "SELECT 1 FROM `group` WHERE id = " . $_POST["group"];
+    $result = mysqli_query($db, $query);
+    if(mysqli_fetch_row($result)[0] != 1) {
+      send_alert($target, "warning", "Gruppe existiert nicht");
+    }
+  }
+  // Gruppe valid
+
   // Adresse validieren
   // Nicht gegeben
   // ODER
@@ -161,11 +185,12 @@
 
   // Eintrag in die Datenbank tun
   $query = sprintf(
-    "INSERT INTO participant(name, gender, birthday, birthplace, address, post_code, city, note) VALUE ('%s', %s, %s, %s, %s, %s, %s, %s)",
+    "INSERT INTO participant(name, gender, birthday, birthplace, group_id, address, post_code, city, note) VALUE ('%s', %s, %s, %s, %s, %s, %s, %s, %s)",
     mysqli_real_escape_string($db, $_POST["name"]),
     mysql_escape_or_null($_POST["gender"] ?? NULL),
     mysql_escape_or_null($_POST["birthday"] ?? NULL),
     mysql_escape_or_null($_POST["birthplace"] ?? NULL),
+    ($_POST["group"] ?? "NULL"),
     mysql_escape_or_null($_POST["address"] ?? NULL),
     mysql_escape_or_null($_POST["post_code"] ?? NULL),
     mysql_escape_or_null($_POST["city"] ?? NULL),
