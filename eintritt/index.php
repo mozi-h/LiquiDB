@@ -18,11 +18,10 @@
 <body>
   <?= get_nav("eintritt") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account">Benutzer Dashboard</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account">Helfer Dashboard</h1>
 
     <?= catch_alert() ?>
     <div class="card">
-      
       <div class="mdi mdi-account-group-outline card-header">
         Teilnehmer anwesend
       </div>
@@ -50,7 +49,8 @@
             </select>
           </div>
         </div>
-        <button type="submit" class="btn btn-success">Hinzufügen</button>
+        <button type="submit" class="btn btn-success">Anwesend</button>
+        <a class="btn btn-outline-secondary" href="<?= RELPATH ?>eintritt/anwesenheitsliste.php">Anwesenheitsliste</a>
       </form>
       </div>
     </div>
