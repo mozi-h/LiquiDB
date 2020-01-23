@@ -4,6 +4,8 @@
 
   restricted();
 
+  //var_dump($_GET);die;
+
   /** Ziel für Alerts */
   $target = RELPATH . "eintritt/anwesenheitsliste.php";
 
@@ -22,10 +24,10 @@
   }
   else {
     // Termin, zu dem Personen als anwesend markiert sind
-    $_GET["d_formatted"] = substr($_GET["d"], 8, 2) . "." . substr($_GET["d"], 5, 2) . "." . substr($_GET["d"], 0, 4);
+    $_GET["d_unformatted"] = substr($_GET["d"], 6, 4) . "-" . substr($_GET["d"], 3, 2) . "-" . substr($_GET["d"], 0, 2);
     $query = sprintf(
       "SELECT 1 FROM attendance WHERE `date` = '%s' LIMIT 1",
-      $_GET["d_formatted"]
+      $_GET["d_unformatted"]
     );
     $result = mysqli_query($db, $query);
     if(mysqli_fetch_row($result)[0] != 1) {
@@ -48,23 +50,23 @@
 <body>
   <?= get_nav("eintritt") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-outline">Anwesenheit</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-details">Anwesenheitsliste</h1>
     <?= catch_alert() ?>
     <div class="card">
       <div class="mdi mdi-account-group-outline card-header">
         Tag auswählen
       </div>
       <div class="card-body align-content-between">
-      <form method="post" action="<?= RELPATH ?>eintritt/anwesend-senden.php">
+      <form method="get" id="date_view">
         <div class="form-row">
           <div class="form-group col-md-8">
             <label for="date">Tag</label>
-            <select class="selectpicker form-control" data-style="custom-select" data-live-search="true" name="date" id="date" required>
+            <select class="selectpicker form-control" data-style="custom-select" data-live-search="true" name="d" id="date" onchange="$('#date_view').submit()">
               <?php
                 while($row = mysqli_fetch_array($date_result)) {
                   $row["date_formatted"] = substr($row["date"], 8, 2) . "." . substr($row["date"], 5, 2) . "." . substr($row["date"], 0, 4);
                   ?>
-                  <option value="<?= $row["date"] ?>" <?= ($row["date_formatted"] == ($_GET["d_formatted"] ?? "")) ? "selected" : "" ?>><?= $row["date_formatted"] ?></option>
+                  <option value="<?= $row["date_formatted"] ?>" <?= ($row["date"] == ($_GET["d_unformatted"] ?? "")) ? "selected" : "" ?>><?= $row["date_formatted"] ?></option>
                   <?php
                 }
               ?>
@@ -72,8 +74,8 @@
           </div>
           <div class="form-group col-md-4">
             <label class="d-none d-md-block">&nbsp;</label>
-            <a class="d-none d-md-block btn btn-block btn-outline-secondary" href="<?= RELPATH ?>eintritt/">Anwesenheit</a>
-            <a class="b-block d-md-none btn btn-outline-secondary" href="<?= RELPATH ?>eintritt/">Anwesenheit</a>
+            <a class="d-none d-md-block btn btn-block btn-outline-primary mdi mdi-account" href="<?= RELPATH ?>eintritt/">Dashboard</a>
+            <a class="b-block d-md-none btn btn-outline-primary mdi mdi-account" href="<?= RELPATH ?>eintritt/">Dashboard</a>
           </div>
         </div>
       </form>
@@ -81,24 +83,25 @@
     </div>
     <table id="data" class="table table-striped"
       data-toggle="table"
-      data-url="<?= RELPATH ?>ajax/abzeichen/teilnehmer.php"
+      data-url="<?= RELPATH ?>ajax/eintritt/anwesenheitsliste.php?d=<?= $_GET["d"] ?? "" ?>"
 
       data-locale="de-DE"
       data-pagination="true"
       data-show-extended-pagination="true"
       data-show-fullscreen="true"
       data-search="true"
-      data-sort-name="name"
+      data-sort-name="group"
       data-sort-order="asc"
       data-detail-view="false"
       data-detail-view-by-click="true"
       data-detail-formatter="detailFormatter">
       <thead class="thead-dark">
         <th data-field="name" data-sortable="true" data-formatter="genderFormatter">Name</th>
-        <th class="d-none d-md-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
+        <th data-field="group" data-sortable="true">Gruppe</th>
+        <th class="d-none d-lg-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
         <th data-field="age" data-sortable="true">Alter</th>
-        <th class="d-none d-sm-table-cell" data-field="city" data-sortable="true">Ort</th>
-        <th data-field="note" data-sortable="true">Notiz</th>
+        <th class="d-none d-md-table-cell" data-field="city" data-sortable="true">Ort</th>
+        <th class="d-none d-sm-table-cell" data-field="note" data-sortable="true">Notiz</th>
       </thead>
     </table>
     <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">

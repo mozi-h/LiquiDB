@@ -8,7 +8,7 @@
   // TEILNEHMERDATEN
   $query = "SELECT p.id, g.name AS group_name, p.name, p.gender, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note
             FROM participant AS p
-            LEFt JOIN `group` AS g ON p.group_id = g.id";
+            LEFT JOIN `group` AS g ON p.group_id = g.id";
             $result = mysqli_query($db, $query);
 
   $output = [];

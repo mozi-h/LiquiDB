@@ -50,7 +50,8 @@
           </div>
         </div>
         <button type="submit" class="btn btn-success">Anwesend</button>
-        <a class="btn btn-outline-secondary" href="<?= RELPATH ?>eintritt/anwesenheitsliste.php">Anwesenheitsliste</a>
+        <p class="d-md-none mb-2"></p> <!--Platz zwischen den Knöfen auf small-->
+        <a class="btn btn-outline-primary mdi mdi-account-details" href="<?= RELPATH ?>eintritt/anwesenheitsliste.php">Anwesenheitsliste</a>
       </form>
       </div>
     </div>
