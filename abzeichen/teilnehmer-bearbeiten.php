@@ -27,6 +27,26 @@
   // Gruppen
   $query = "SELECT id, name FROM `group`";
   $group_result = mysqli_query($db, $query);
+
+  // Anwesenheits-Statistik
+  $query = sprintf(
+    "SELECT
+      (
+        SELECT COUNT(1) 
+        FROM attendance AS att
+        WHERE att.participant_id = %d
+      ) AS num_attended,
+      (
+        SELECT COUNT(1) 
+        FROM attendance AS att
+        WHERE att.participant_id = %d
+        AND att.paid = 'No'
+      ) AS num_not_paid
+    ",
+    $_GET["id"],
+    $_GET["id"]);
+  $att_stats_result = mysqli_query($db, $query);
+  $att_stats = mysqli_fetch_array($att_stats_result);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -41,6 +61,15 @@
     <h1 class="text-info display-4 text-center mdi mdi-account-edit-outline">Teilnehmer bearbeiten</h1>
 
     <?= catch_alert() ?>
+    <?php if($att_stats["num_not_paid"] > 0) { ?>
+      <div class="alert alert-danger alert-dismissible " role="alert">
+        Teilnehmer hat an <?= $att_stats["num_not_paid"] ?> <?= get_quantity($att_stats["num_not_paid"], "Tag", "Tagen") ?> nicht bezahlt (<?= number_format($att_stats["num_not_paid"] * ENTRANCE_FEE, 2, ",", ".") ?> € Schulden)
+        <!-- Trigger modal -->
+        <button type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#clearDebt">
+          Schulden begleichen
+        </button>
+      </div>
+    <?php } ?>
     <div class="card mb-3">
       <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/teilnehmer-bearbeiten-senden.php?id=<?= $participant["id"] ?>">
         <div class="form-row">
@@ -115,12 +144,59 @@
         <button type="submit" class="btn btn-primary">Ändern</button>
       </form>
     </div>
-    <div class="card">
+    <div class="card mb-3">
       <div class="card-header">
-      Abzeichen
+        Abzeichen
       </div>
       <div class="card-body">
         Liste der Abzeichen in arbeit
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        Anwesenheit
+      </div>
+      <div class="card-body">
+        <table id="data" class="table table-striped"
+          data-toggle="table"
+          data-url="<?= RELPATH ?>ajax/abzeichen/anwesenheitsliste_teilnehmer.php?id=<?= $_GET["id"] ?? "" ?>"
+
+          data-locale="de-DE"
+          data-pagination="true"
+          data-show-extended-pagination="true"
+          data-show-fullscreen="true"
+          data-show-refresh="true"
+          data-search="true"
+          data-sort-name="group"
+          data-sort-order="asc">
+          <thead class="thead-dark">
+            <th data-field="date_formatted" data-sortable="true">Datum</th>
+            <th data-field="status" data-sortable="true">Status</th>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- Schulden-begleichen modal -->
+  <div class="modal fade" id="clearDebt" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Schulden begleichen</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Dies markiert alle nicht bezahlten Termine des Teilnehmers als Bezahlt. Dies kann nicht rückgängig gemacht werden.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+          <a type="button" class="btn btn-warning" href="<?= RELPATH ?>abzeichen/schulden-begleichen-senden.php?id=<?= $_GET["id"] ?>">Fortfahren</a>
+        </div>
       </div>
     </div>
   </div>

@@ -45,7 +45,7 @@
             <select class="selectpicker form-control" data-style="custom-select" name="paid" id="paid" required>
               <option class="mdi mdi-cash-multiple" value="Yes" selected>Bezahlt</option>
               <option class="mdi mdi-account-badge-outline" value="Other">Jahreskarte / Anders</option>
-              <option class="mdi mdi-cash-remove" value="No">Nicht Bezahlt / nötig</option>
+              <option class="mdi mdi-cash-remove" value="No">Nicht Bezahlt</option>
             </select>
           </div>
         </div>
