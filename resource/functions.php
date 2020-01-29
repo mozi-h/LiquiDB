@@ -65,6 +65,27 @@
     return $participant;
   }
 
+  function get_group(int $id): array {
+    global $db;
+
+    $query = sprintf(
+      "SELECT * FROM `group` WHERE id = %d",
+      $id
+    );
+    $result = mysqli_query($db, $query);
+    if(!$result) {
+      die("Fehler beim auflösen der GroupID.");
+    }
+    $group = mysqli_fetch_array($result);
+    if(!$group) {
+      die("Fehler beim auflösen der GroupID.");
+    }
+    // Zusatzdaten
+    $group["name_esc"] = escape($group["name"]);
+    $group["description_esc"] = escape($group["description"]);
+    return $group;
+  }
+
   /**
    * Löst Nutzer-$id zu einem Array mit dessen Daten auf.
    *

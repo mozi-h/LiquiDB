@@ -25,6 +25,7 @@
       data-pagination="true"
       data-show-extended-pagination="true"
       data-show-fullscreen="true"
+      data-show-refresh="true"
       data-search="true"
       data-sort-name="username"
       data-sort-order="asc"
