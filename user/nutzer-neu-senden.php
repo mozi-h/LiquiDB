@@ -77,7 +77,7 @@
   $pw_hash = hash_password($salt, $_POST["pw"]);
   // Eintrag in die Datenbank tun
   $query = sprintf(
-    "INSERT INTO user(username, name, salt, pw_hash, ist_trainer, ist_admin) VALUE ('%s', %s, '%s', '%s', %d, %d)",
+    "INSERT INTO user(username, name, salt, pw_hash_bin, ist_trainer, ist_admin) VALUE ('%s', %s, '%s', UNHEX('%s'), %d, %d)",
     mysqli_real_escape_string($db, $_POST["username"]),
     (isset($_POST["name"]) ? "'" . mysqli_real_escape_string($db, $_POST["name"]) . "'" : "NULL"), // Anzeigename bzw. NULL
     mysqli_real_escape_string($db, $salt),
