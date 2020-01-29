@@ -4,8 +4,6 @@
 
   restricted();
 
-  //var_dump($_GET);die;
-
   /** Ziel für Alerts */
   $target = RELPATH . "eintritt/anwesenheitsliste.php";
 
