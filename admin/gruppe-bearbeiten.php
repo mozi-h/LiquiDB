@@ -19,7 +19,7 @@
   );
   $result = mysqli_query($db, $query);
   if(mysqli_num_rows($result) != 1) {
-    // id kein Nutzer
+    // id keine Gruppe
     send_alert($target, "warning", "ID ist keine Gruppe");
   }
   $group = get_group($_GET["id"]);
@@ -58,7 +58,7 @@
 <body>
   <?= get_nav("admin") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-edit-outline">Teilnehmer bearbeiten</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-edit-outline">Gruppe bearbeiten</h1>
 
     <?= catch_alert() ?>
     <div class="card">

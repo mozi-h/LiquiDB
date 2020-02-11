@@ -115,7 +115,7 @@
         // Sitzung abgelaufen
         unset($_SESSION["USER"]);
         unset($_SESSION["USER_LOGINTIME"]);
-        send_alert(RELPATH . "index.php", "info", "Ihre Sitzung ist abgelaufen, da sich ihr Passwort verändert hat.");
+        send_alert(RELPATH . "index.php", "info", "Ihre Sitzung ist abgelaufen, da sich Ihr Passwort verändert hat.");
       }
     }
     // Zusatzdaten
