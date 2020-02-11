@@ -14,11 +14,11 @@
 <body>
   <?= get_nav("abzeichen") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-outline">Teilnehmer</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-outline">Abzeichen</h1>
     <?= catch_alert() ?>
     <table id="data" class="table table-striped"
       data-toggle="table"
-      data-url="<?= RELPATH ?>ajax/abzeichen/teilnehmer.php"
+      data-url="<?= RELPATH ?>ajax/abzeichen/abzeichen.php"
 
       data-locale="de-DE"
       data-pagination="true"
@@ -32,16 +32,14 @@
       data-detail-view-by-click="true"
       data-detail-formatter="detailFormatter">
       <thead class="thead-dark">
-        <th data-field="name" data-sortable="true" data-formatter="genderFormatter">Name</th>
-        <th data-field="group" data-sortable="true">Gruppe</th>
-        <th class="d-none d-lg-table-cell" data-field="birthday" data-sortable="false">Geburtstag</th>
-        <th data-field="age" data-sortable="true">Alter</th>
-        <th class="d-none d-md-table-cell" data-field="city" data-sortable="true">Ort</th>
-        <th class="d-none d-sm-table-cell" data-field="note" data-sortable="true">Notiz</th>
+        <th data-field="participant_name" data-sortable="true" data-formatter="genderFormatter">Teilnehmer</th>
+        <th data-field="badge_name" data-sortable="true">Gruppe</th>
+        <th class="d-none d-lg-table-cell" data-field="issue_date" data-sortable="false">Ausstellungsdatum</th>
       </thead>
     </table>
     <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">
-      Klicke auf einen Teilnehmer, um diesen zu bearbeiten
+      Klicke auf ein Abzeichen, um dieses zu bearbeiten<br>
+      Blaue hervorhebung bedeutet, dass das Abzeichen gesetzt wurde.
     </div>
   </div>
   

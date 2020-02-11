@@ -4,11 +4,12 @@
 
   restricted("Trainer");
 
-  // Liste der Abzeichenarten
-  $query = "SELECT name_internal, name_short
-            FROM badge_list
-            WHERE regulation = (SELECT * FROM regulation_current);";
-  $badge_list_result = mysqli_query($db, $query);
+  // Alle Teilnehmer
+  $query = "SELECT p.id, p.name
+            FROM participant AS p
+            LEFT JOIN attendance AS att ON att.participant_id = p.id
+            ORDER BY att.date DESC, p.name ASC";
+  $participant_result = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -27,20 +28,21 @@
       <form class="m-4" method="post" action="<?= RELPATH ?>abzeichen/abzeichen-neu-senden.php">
         <div class="form-row">
           <div class="form-group col-md-6">
-            <label for="name">Teilnehmer</label>
-            <input type="text" class="form-control" name="name" id="name" required minlength=5 maxlength=50 placeholder="Max Muster (Pflichtfeld)" <?= get_fill_form("name") ?>>
+            <label for="participant">Teilnehmer</label>
+            <select class="selectpicker form-control" data-style="custom-select" data-live-search="true" name="participant[]" id="participant" title="Auswählen..." data-selected-text-format="count > 5" multiple required data-max-options="20">
+              <?php
+                while($row = mysqli_fetch_array($participant_result)) {
+                  ?>
+                  <option value="<?= $row["id"] ?>"><?= $row["name"] ?></option>
+                  <?php
+                }
+              ?>
+            </select>
           </div>
           <div class="form-group col-md-3">
             <label for="badge">Abzeichen</label>
             <select class="selectpicker" data-style="custom-select" data-live-search="true" name="badge" id="badge" title="Auswählen">
-              <?php
-                // Alle Abzeichenarten ausgeben
-                foreach($badge_list_result as $badge) {
-                  ?>
-                  <option value="<?= escape($badge["name_internal"]) ?>"><?= escape($badge["name_short"]) ?></option>
-                  <?php
-                }
-              ?>
+              <?php require(RELPATH . "resource/abzeichen-options.html") ?>
             </select>
           </div>
           <div class="form-group col-md-3">
