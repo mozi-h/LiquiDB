@@ -30,17 +30,33 @@ CREATE TABLE IF NOT EXISTS `attendance` (
   CONSTRAINT `FK_attendance_user` FOREIGN KEY (`author_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Pro Datum kann je Zeile entweder:\r\nparticipant_id und ob/wie gezahlt wurde\r\nODER\r\nother_amount -> nicht als participant vorhandene anzahl anderer personen, die ob/wie gezahlt haben';
 
--- Exportiere Daten aus Tabelle liquidb.attendance: ~8 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.attendance: ~22 rows (ungefähr)
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
 INSERT INTO `attendance` (`date`, `participant_id`, `other_amount`, `paid`, `author_user_id`) VALUES
 	('2020-01-20', 10, NULL, 'Yes', 1),
 	('2020-01-21', 1, NULL, 'Other', 2),
 	('2020-01-21', 4, NULL, 'Yes', 2),
 	('2020-01-21', 6, NULL, 'Yes', 2),
-	('2020-01-21', 8, NULL, 'No', 2),
-	('2020-01-21', 9, NULL, 'No', 2),
+	('2020-01-21', 8, NULL, 'Yes', 2),
+	('2020-01-21', 9, NULL, 'Yes', 2),
 	('2020-01-21', 10, NULL, 'Yes', 1),
-	('2020-01-21', 22, NULL, 'Other', 2);
+	('2020-01-21', 22, NULL, 'Other', 2),
+	('2020-01-23', 10, NULL, 'Other', 2),
+	('2020-01-23', 51, NULL, 'Yes', 2),
+	('2020-01-24', 103, NULL, 'Yes', 2),
+	('2020-01-24', 105, NULL, 'Yes', 2),
+	('2020-01-26', 10, NULL, 'Yes', 2),
+	('2020-01-29', 4, NULL, 'Other', 2),
+	('2020-01-29', 8, NULL, 'Yes', 4),
+	('2020-01-29', 10, NULL, 'Yes', 2),
+	('2020-01-29', 25, NULL, 'Other', 4),
+	('2020-01-29', 50, NULL, 'No', 4),
+	('2020-01-29', 51, NULL, 'Yes', 2),
+	('2020-01-29', 52, NULL, 'No', 2),
+	('2020-01-29', 59, NULL, 'Yes', 2),
+	('2020-01-29', 79, NULL, 'Other', 4),
+	('2020-01-29', 95, NULL, 'Yes', 2),
+	('2020-01-29', 103, NULL, 'Other', 4);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 
 -- Exportiere Struktur von View liquidb.attendance_today_not
@@ -56,7 +72,8 @@ CREATE TABLE IF NOT EXISTS `badge` (
   `participant_id` int(10) unsigned NOT NULL,
   `badge_name_internal` enum('FRUEHSCHWIMMER','DSA_BRONZE','DSA_SILBER','DSA_GOLD','JUNIORRETTER','DRSA_BRONZE','DRSA_SILBER','DRSA_GOLD','DSTA') NOT NULL,
   `issue_date` date DEFAULT NULL COMMENT 'Datum der Ausstellung',
-  `issue_forced` binary(1) DEFAULT NULL COMMENT '0: Abzeichen mit LiquiDB begleitet\r\n1: Manuell Eingetragen, LiquiDB überschrieben',
+  `status` enum('WIP','OK','OLD') GENERATED ALWAYS AS (if(`issue_date` is null,'WIP',if(timestampdiff(YEAR,`issue_date`,curdate() - interval 1 day) >= 2,'OLD','OK'))) VIRTUAL,
+  `issue_forced` tinyint(1) DEFAULT NULL COMMENT '0: Abzeichen mit LiquiDB begleitet\r\n1: Manuell Eingetragen, LiquiDB überschrieben',
   `issue_trainer` varchar(50) DEFAULT NULL COMMENT 'Trainer, der ausgestellt hat',
   `issue_user_id` int(10) unsigned DEFAULT NULL COMMENT 'Benutzer, der Abzeichen als ausgestellt markiert hat',
   PRIMARY KEY (`id`),
@@ -66,10 +83,17 @@ CREATE TABLE IF NOT EXISTS `badge` (
   CONSTRAINT `FK_badge_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`),
   CONSTRAINT `FK_badge_participant` FOREIGN KEY (`participant_id`) REFERENCES `participant` (`id`),
   CONSTRAINT `FK_badge_user` FOREIGN KEY (`issue_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.badge: ~0 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.badge: ~6 rows (ungefähr)
 /*!40000 ALTER TABLE `badge` DISABLE KEYS */;
+INSERT INTO `badge` (`id`, `participant_id`, `badge_name_internal`, `issue_date`, `issue_forced`, `issue_trainer`, `issue_user_id`) VALUES
+	(3, 10, 'DRSA_SILBER', '2020-02-12', 1, NULL, NULL),
+	(4, 8, 'DSA_SILBER', '2020-02-12', NULL, NULL, NULL),
+	(5, 52, 'FRUEHSCHWIMMER', NULL, NULL, NULL, NULL),
+	(6, 62, 'DSA_BRONZE', '2018-01-20', NULL, NULL, NULL),
+	(7, 62, 'DSA_BRONZE', '2020-01-08', NULL, NULL, NULL),
+	(8, 62, 'JUNIORRETTER', '2019-11-23', NULL, NULL, NULL);
 /*!40000 ALTER TABLE `badge` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.badge_list
@@ -222,14 +246,16 @@ CREATE TABLE IF NOT EXISTS `group` (
   `name` varchar(50) NOT NULL,
   `description` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.group: ~1 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.group: ~5 rows (ungefähr)
 /*!40000 ALTER TABLE `group` DISABLE KEYS */;
 INSERT INTO `group` (`id`, `name`, `description`) VALUES
 	(1, 'Gruppe 1', 'Nichtschwimmer. Anfänger bis Frühschwimmer.'),
 	(2, 'Gruppe 2', 'Fortgeschrittene. Jugendschwimmabzeichen.'),
-	(3, 'Gruppe 3', '(Angehende) Rettungsschwimmer');
+	(3, 'Gruppe 3', '(Angehende) Rettungsschwimmer'),
+	(4, 'Gruppe 4', 'Extratolle imaginäre Gruppe!\r\nNeue Zeile 🎉'),
+	(5, 'Seestern Gruppe', 'Wassergewöhnung mit Eltern');
 /*!40000 ALTER TABLE `group` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.participant
@@ -253,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   CONSTRAINT `FK_participant_user` FOREIGN KEY (`added_by_user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.participant: ~103 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.participant: ~105 rows (ungefähr)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `address`, `post_code`, `city`, `note`, `added_by_user_id`, `group_id`) VALUES
 	(1, 'Tim Teilnehmer', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
@@ -261,7 +287,7 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(6, 'Frauke Fröhlich', NULL, '2005-01-17', 'London', 'Bahnhofstrasse 1', '52825', 'Münster', 'Allergie gegen Chlor\r\nTel.: 05728 3985', 1, NULL),
 	(7, 'Eryn Chadwick', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(8, 'Aisha Lunt', 'w', NULL, NULL, NULL, NULL, NULL, 'Vitae id possimus quisquam ab sapiente molestias amet. Quia nihil praesentium quia voluptatem soluta ullam. Deserunt numquam beatae non consequatur velit. Beatae sequi repellat earum eveniet.\r\nSequi vel sit aut sunt consequatur sed. Dolore dolorem qui doloribus ut.', 1, NULL),
-	(9, 'Owen Pratt', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
+	(9, 'Owen Pratt', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, 2),
 	(10, 'Abdul-Kai Forester', 'm', '2000-10-04', 'Ulster', 'Kaufstraße 12c', '74635', 'Orthausen', 'Erreichbar unter 02938 748564\r\nSchwierigkeiten mit Streckentauchen', 1, 3),
 	(11, 'Ronald Warren', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(12, 'Julius Utterson', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
@@ -277,7 +303,7 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(22, 'Maxwell Armstrong', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(23, 'Jack Tait', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(24, 'Gil Sanchez', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
-	(25, 'Anthony Jordan', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
+	(25, 'Anthony Jordan', 'm', '2001-06-21', 'Brakel', NULL, NULL, NULL, NULL, 1, 2),
 	(26, 'Chad Campbell', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(27, 'Noah Russell', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(28, 'Candace Bryson', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
@@ -302,8 +328,8 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(47, 'Oliver Hobson', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(48, 'Rocco Donovan', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(49, 'Sasha Edmonds', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
-	(50, 'Barry Khan', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
-	(51, 'Blake Hunter', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
+	(50, 'Barry Khan', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, 3),
+	(51, 'Blake Hunter', 'd', '1999-07-14', NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(52, 'Barry Simpson', 'm', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(53, 'Lillian Saunders', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
 	(54, 'Carolyn Lane', 'w', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL),
@@ -352,12 +378,12 @@ INSERT INTO `participant` (`id`, `name`, `gender`, `birthday`, `birthplace`, `ad
 	(97, 'Luna Curtis', 'w', NULL, 'Berlin', NULL, NULL, NULL, NULL, 1, NULL),
 	(98, 'Chester Grey', 'm', NULL, 'London', NULL, NULL, NULL, NULL, 1, NULL),
 	(99, 'Maddison Poulton', 'w', NULL, 'London', NULL, NULL, NULL, NULL, 1, NULL),
-	(100, 'Domenic Yang', 'm', NULL, 'El Paso', NULL, NULL, NULL, NULL, 1, NULL),
+	(100, 'Domenic Yang', 'm', '2001-06-21', 'El Paso', NULL, NULL, NULL, 'Auf dem Tablet editiert', 1, 3),
 	(101, 'Mark Hall', 'm', NULL, 'Bridgeport', NULL, NULL, NULL, NULL, 1, NULL),
 	(102, 'Clint Dallas', 'm', NULL, 'Colorado Springs', NULL, NULL, NULL, NULL, 1, NULL),
-	(103, 'Camden Jarrett', 'w', NULL, 'Otawa', NULL, NULL, NULL, NULL, 1, NULL),
+	(103, 'Camden Jarrett', 'w', NULL, 'Otawa', NULL, NULL, NULL, NULL, 1, 2),
 	(104, 'Rosemary Avery', 'w', NULL, 'New Orleans', NULL, NULL, NULL, NULL, 1, NULL),
-	(105, 'Maxwell Norton', 'm', NULL, 'Bellevue', NULL, NULL, NULL, NULL, 1, NULL),
+	(105, 'Maxwell Norton', 'm', NULL, 'Bellevue', NULL, NULL, NULL, NULL, 1, 1),
 	(106, 'Nick Appleton', 'm', NULL, 'Portland', NULL, NULL, NULL, NULL, 1, NULL),
 	(108, 'Tina Testing', NULL, NULL, NULL, NULL, NULL, NULL, 'Gruppen-\r\ntest!\r\n🎉', 1, NULL),
 	(109, 'Tanja Test2', NULL, NULL, NULL, NULL, NULL, NULL, 'Mehr Tests!\r\n✨', 1, 3);
@@ -385,6 +411,24 @@ CREATE TABLE `regulation_current` (
 	`name_internal` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci'
 ) ENGINE=MyISAM;
 
+-- Exportiere Struktur von Tabelle liquidb.test
+CREATE TABLE IF NOT EXISTS `test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `person` int(11) NOT NULL DEFAULT 0,
+  `branch` enum('A','B') NOT NULL DEFAULT 'A',
+  `date` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+
+-- Exportiere Daten aus Tabelle liquidb.test: ~4 rows (ungefähr)
+/*!40000 ALTER TABLE `test` DISABLE KEYS */;
+INSERT INTO `test` (`id`, `person`, `branch`, `date`) VALUES
+	(1, 1, 'A', '2020-02-12'),
+	(2, 0, 'A', '2019-09-22'),
+	(3, 1, 'B', '2017-10-06'),
+	(4, 1, 'A', '2023-08-13');
+/*!40000 ALTER TABLE `test` ENABLE KEYS */;
+
 -- Exportiere Struktur von Tabelle liquidb.user
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -400,22 +444,23 @@ CREATE TABLE IF NOT EXISTS `user` (
   `ist_admin` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.user: ~5 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.user: ~6 rows (ungefähr)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`id`, `username`, `name`, `salt`, `pw_hash_bin`, `pw_changed`, `pw_must_change`, `ist_trainer`, `ist_admin`) VALUES
 	(1, 'system', 'System', 'cGYF)ma?2aPQ0]}&kjBY:Opxw#nm$9i|', _binary 0xAFB3E303AD2F243ED3F720B87CAE4CFAC676DAC8C3162F22F2314C471C380D7E, '2020-01-09 18:44:59', 0, 1, 1),
-	(2, 'mozi_h', NULL, 'S.;s%%1nd:*Xo/YUR$Jo-(ou&EUU.w8_', _binary 0x5ED266089B51128FD71E577B8D7792B338C83C82DB795E0AC756E8AF20A5C1A6, '2020-01-21 10:21:45', 0, 1, 1),
-	(3, 'marv', 'Marvin', 'CmG?WU7$3O4n#P=N1762#g_FYD >(Oy-', _binary 0x9ABF1B211FFF73B8D288DBCB32B06ED2B690D3181252252507803AA601CB8620, '2020-01-09 17:53:01', 0, 1, 0),
-	(4, 'alex', NULL, ':n:Ygfv&MmY6#,<jRMH%70nbL$gisgvw', _binary 0x5B606CC0258C65970DF3D52A0BB7CFFCD974C95336025DD3C2A7D3FB0C0AF958, '2020-01-17 12:30:18', 0, 0, 1),
-	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', _binary 0x47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7, '2020-01-09 17:55:42', 0, 1, 0);
+	(2, 'mozi_h', NULL, 'S.;s%%1nd:*Xo/YUR$Jo-(ou&EUU.w8_', _binary 0x5ED266089B51128FD71E577B8D7792B338C83C82DB795E0AC756E8AF20A5C1A6, '2020-01-30 12:43:39', 0, 1, 1),
+	(3, 'marv', 'Marvin', 'CmG?WU7$3O4n#P=N1762#g_FYD >(Oy-', _binary 0x9ABF1B211FFF73B8D288DBCB32B06ED2B690D3181252252507803AA601CB8620, '2020-01-09 17:53:01', 0, 0, 0),
+	(4, 'alex', 'Alec', ' a(Ft/b;g>zwtv7#lKqQ*q/tLXSqX+2*', _binary 0x726414986D7EE9FFA9FC3953888FF98DA899285B73702DA4DEECA947EED7596B, '2020-01-29 10:28:30', 0, 1, 0),
+	(5, 'nina', 'Nina Neu', 'b.7i_y/F cUFB}Tmb=wdE;897x|>a/xS', _binary 0x47C6C9BC102DB52CA0AA11B473C37C6B47B04E33C49B57FF2DC6BD85BB13FBB7, '2020-01-09 17:55:42', 0, 1, 0),
+	(6, 'nico', 'Nico stul', 'fnl_0aCMr$l}W1=&1.D-g|?9Ie,6&}%I', _binary 0x4DAB9F069846F5B4A002461746B15647D817F8A2627062B9E98A4A7E74AD41EB, NULL, 1, 1, 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 -- Exportiere Struktur von View liquidb.attendance_today_not
 -- Entferne temporäre Tabelle und erstelle die eigentliche View
 DROP TABLE IF EXISTS `attendance_today_not`;
-CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `attendance_today_not` AS select `p`.`id` AS `id`,`p`.`name` AS `name` from `participant` `p` where !(`p`.`id` in (select `p`.`id` from (`participant` `p` left join `attendance` `a` on(`p`.`id` = `a`.`participant_id`)) where `a`.`date` = cast(current_timestamp() as date)));
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `attendance_today_not` AS select `p`.`id` AS `id`,`p`.`name` AS `name` from `participant` `p` where !(`p`.`id` in (select `p`.`id` from (`participant` `p` left join `attendance` `a` on(`p`.`id` = `a`.`participant_id`)) where `a`.`date` = cast(current_timestamp() as date))) order by `p`.`name`;
 
 -- Exportiere Struktur von View liquidb.regulation_current
 -- Entferne temporäre Tabelle und erstelle die eigentliche View
