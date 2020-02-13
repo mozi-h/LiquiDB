@@ -91,6 +91,7 @@
   
   <?= get_foot() ?>
   <script>
+    // Datepicker
     <?php
       $timezone = new DateTimeZone(TIMEZONE);
       $current_date = new DateTime("now", $timezone);

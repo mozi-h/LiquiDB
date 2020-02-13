@@ -77,7 +77,6 @@
       send_alert($target, "warning", "Zu alt (max 100 Jahre alt)", False, $_POST);
     }
     // Geburtsdatum gegeben und valid
-    $_POST["birthday"] = substr($_POST["birthday"], 6, 4) . "-" . substr($_POST["birthday"], 3, 2) . "-" . substr($_POST["birthday"], 0, 2);
   }
 
   // Geburtsort validieren

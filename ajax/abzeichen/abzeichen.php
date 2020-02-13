@@ -6,7 +6,7 @@
   restricted("Trainer");
 
   // ABZEICHENDATEN
-  $query = "SELECT b.id, p.name AS participant_name, p.gender, b_l.name_short, DATE_FORMAT(b.issue_date, '%d.%m.%Y') AS issue_date, b.status, b.issue_forced
+  $query = "SELECT b.id, p.name AS participant_name, filter_b.participant_id AS participant_id, p.gender, b_l.name_short, DATE_FORMAT(b.issue_date, '%d.%m.%Y') AS issue_date, b.status, b.issue_forced
             FROM (
               SELECT participant_id, badge_name_internal, MAX(issue_date) AS most_recent_issue_date
               FROM badge AS b
@@ -14,7 +14,7 @@
             ) AS filter_b
             INNER JOIN badge AS b ON filter_b.participant_id = b.participant_id
               AND filter_b.badge_name_internal = b.badge_name_internal
-              AND filter_b.most_recent_issue_date = b.issue_date
+              AND (filter_b.most_recent_issue_date = b.issue_date OR b.issue_date IS NULL)
             LEFT JOIN badge_list AS b_l ON b.badge_name_internal = b_l.name_internal
             LEFT JOIN participant AS p ON b.participant_id = p.id";
             $result = mysqli_query($db, $query);
@@ -29,6 +29,7 @@
     $tmp = [];
     $tmp["id"] = $row["id"];
     $tmp["participant_name"] = escape($row["participant_name"]) ?? "";
+    $tmp["participant_id"] = $row["participant_id"];
     $tmp["gender"] = $row["gender"];
     $tmp["badge_name"] = escape($row["name_short"]) ?? "";
     $tmp["status"] = $status_lookup[$row["status"]];
