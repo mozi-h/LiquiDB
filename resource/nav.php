@@ -1,7 +1,7 @@
 <ul class="nav nav-custom px-2 py-2">
-  <!--a class="navbar-brand px-1" href="#">
-    <img src="img/logo.png" height="30">
-  </a-->
+  <a class="navbar-brand p-1" href="<?= RELPATH ?>">
+    <b>Liqui<span class="mdi mdi-water"></span>DB</b>
+  </a>
   <li class="nav-item bg-light">
     <a class="nav-link <?= $tab["index"] ?? "" ?>" href="<?= RELPATH ?>index.php">Home</a>
   </li>
