@@ -65,6 +65,13 @@
     return $participant;
   }
 
+  /**
+   * Löst Gruppen-$id zu einem Array mit dessen Daten auf.
+   *
+   * @param int $id Gruppen-ID
+   *
+   * @return array Gruppendaten aus der Datenbank plus einige Zusatzdaten
+   */
   function get_group(int $id): array {
     global $db;
 
@@ -84,6 +91,42 @@
     $group["name_esc"] = escape($group["name"]);
     $group["description_esc"] = escape($group["description"]);
     return $group;
+  }
+
+  /**
+   * Löst Abzeichen-$id zu einem Array mit dessen Daten auf.
+   *
+   * @param int $id Abzeichen-ID
+   *
+   * @return array Abzeichendaten aus der Datenbank plus einige Zusatzdaten
+   */
+  function get_badge(int $id): array {
+    global $db;
+
+    $query = sprintf(
+      "SELECT *
+      FROM badge AS b
+      LEFT JOIN badge_list AS b_l ON b.badge_name_internal = b_l.name_internal
+      WHERE id = %d",
+      $id
+    );
+    $result = mysqli_query($db, $query);
+    if(!$result) {
+      die("Fehler beim auflösen der BadgeID.");
+    }
+    $badge = mysqli_fetch_array($result);
+    if(!$badge) {
+      die("Fehler beim auflösen der BadgeID.");
+    }
+    // Zusatzdaten
+    $badge["name_esc"] = $badge["name"];
+    if($badge["issue_date"]) { // 20.06.2001  2001-06-20
+      $badge["issue_date_formatted"] = substr($badge["issue_date"], 8, 2) . "." . substr($badge["issue_date"], 5, 2) . "." . substr($badge["issue_date"], 0, 4);
+    }
+    else {
+      $badge["issue_date_formatted"] = NULL;
+    }
+    return $badge;
   }
 
   /**
@@ -151,6 +194,16 @@
   function get_nav(string $aktiver_tab): void {
     $tab[$aktiver_tab] = "active";
     require("nav.php");
+  }
+
+  /**
+   * Löst sich zur den Abzeichen als option-Tag auf.
+   * 
+   * @param string $active_badge Option, die selektiert ist.
+   * */
+  function get_badge_options(string $active_badge = ""): void {
+    $active[$active_badge] = "selected";
+    require("abzeichen-options.php");
   }
 
   /**

@@ -160,7 +160,7 @@
               <div class="form-group col-md-6">
                 <label for="badge">Abzeichen</label>
                 <select class="form-control selectpicker" data-style="custom-select" data-live-search="true" name="badge" id="badge" title="Auswählen" required>
-                  <?php require(RELPATH . "resource/abzeichen-options.html") ?>
+                  <?php get_badge_options() ?>
                 </select>
               </div>
               <div id="datepicker-badge-container" class="form-group col-md-6">

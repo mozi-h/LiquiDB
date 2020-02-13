@@ -42,7 +42,7 @@
           <div class="form-group col-md-3">
             <label for="badge">Abzeichen</label>
             <select class="selectpicker" data-style="custom-select" data-live-search="true" name="badge" id="badge" title="Auswählen">
-              <?php require(RELPATH . "resource/abzeichen-options.html") ?>
+              <?php get_badge_options() ?>
             </select>
           </div>
           <div class="form-group col-md-3">
