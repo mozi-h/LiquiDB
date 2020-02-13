@@ -49,7 +49,7 @@
   <script>
     // Detail-Funktion leitet zur Bearbeiten-Seite weiter
     function detailFormatter(index, row) {
-      window.location.href = "<?= RELPATH ?>abzeichen/teilnehmer-bearbeiten.php?id=" + row["id"];
+      window.location.href = "<?= RELPATH ?>abzeichen/abzeichen-bearbeiten.php?id=" + row["id"];
     }
 
     // Zeigt Gender-Symbol vor Namen an, wenn gegeben
@@ -72,8 +72,6 @@
       "Alt": "orange"
     }
     function rowStyle(row) {
-      console.log(row);
-      
       var css = {
         "background-color": status_colors[row["status"]]
       }

@@ -27,6 +27,10 @@
   cursor: help;
 }
 
+.no-decoration:hover {
+  text-decoration: none;
+}
+
 /* Material Design Icons CSS */
 .alert.mdi::before,
 .breadcrumb .mdi::before,

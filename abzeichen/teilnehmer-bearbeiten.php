@@ -47,6 +47,8 @@
     $_GET["id"]);
   $att_stats_result = mysqli_query($db, $query);
   $att_stats = mysqli_fetch_array($att_stats_result);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -145,18 +147,69 @@
       </form>
     </div>
     <div class="card mb-3">
-      <div class="card-header">
+      <div class="card-header mdi mdi-cards-outline">
         Abzeichen
       </div>
       <div class="card-body">
-        Liste der Abzeichen in arbeit
+        <a class="btn btn-outline-success" data-toggle="collapse" href="#abzeichen-neu">
+          Abzeichen anlegen
+        </a>
+        <div class="collapse" id="abzeichen-neu">
+        <form method="post" action="<?= RELPATH ?>abzeichen/abzeichen-neu-senden.php?id=<?= $_GET["id"] ?>">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="badge">Abzeichen</label>
+              <select class="form-control selectpicker" data-style="custom-select" data-live-search="true" name="badge" id="badge" title="Auswählen" required>
+                <?php require(RELPATH . "resource/abzeichen-options.html") ?>
+              </select>
+            </div>
+            <div id="datepicker-badge-container" class="form-group col-md-6">
+              <label for="issue-date">Ausstelldatum (setzen)</label>
+              <div class="input-group date">
+                <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ">
+                <div class="input-group-append input-group-addon">
+                  <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success mdi mdi-card-plus-outline">Anlegen</button>
+        </form>
+        </div>
+        <table id="data" class="table table-striped"
+          data-toggle="table"
+          data-url="<?= RELPATH ?>ajax/abzeichen/abzeichen-teilnehmer.php?id=<?= $_GET["id"] ?>"
+
+          data-locale="de-DE"
+          data-pagination="true"
+          data-show-extended-pagination="true"
+          data-show-fullscreen="true"
+          data-show-refresh="true"
+          data-search="true"
+          data-sort-name="issue_date"
+          data-sort-order="desc"
+          data-detail-view="false"
+          data-detail-view-by-click="true"
+          data-detail-formatter="detailFormatter"
+          data-row-style="rowStyle">
+          <thead class="thead-dark">
+            <th data-field="badge_name" data-sortable="true">Abzeichen</th>
+            <th class="d-none d-lg-table-cell" data-field="issue_date_formatted" data-sortable="true">Ausstellungsdatum</th>
+            <th class="d-none" data-field="issue_date" data-sortable="false">Ausstellungsdatum</th>
+            <th class="d-none d-md-table-cell" data-field="status" data-sortable="true">Status</th>
+          </thead>
+        </table>
+        <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">
+          Klicke auf ein Abzeichen, um dieses zu bearbeiten<br>
+          Hintergrundfarben: <span style="background-color:lightgray">In Arbeit</span>  <span style="background-color:lightgreen">Gültig</span>  <span style="background-color:lightblue">Gültig (gesetzt)</span>  <span style="background-color:orange">Abgelaufen</span>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        Anwesenheit
-      </div>
-      <div class="card-body">
+    <div class="card mb-2">
+      <a class="card-header mdi mdi-account-group-outline text-reset no-decoration" data-toggle="collapse" href="#anwesenheit">
+        Anwesenheit <span class="mdi mdi-menu-down"></span>
+      </a>
+      <div class="card-body collapse" id="anwesenheit">
         <table id="data" class="table table-striped"
           data-toggle="table"
           data-url="<?= RELPATH ?>ajax/abzeichen/anwesenheitsliste_teilnehmer.php?id=<?= $_GET["id"] ?? "" ?>"
@@ -177,8 +230,6 @@
       </div>
     </div>
   </div>
-
-  
 
   <!-- Schulden-begleichen modal -->
   <div class="modal fade" id="clearDebt" tabindex="-1" role="dialog">
@@ -207,6 +258,16 @@
       $timezone = new DateTimeZone(TIMEZONE);
       $current_date = new DateTime("now", $timezone);
     ?>
+    // Abzeichen neu
+    $('#datepicker-badge-container .input-group.date').datepicker({
+      format: "dd.mm.yyyy",
+      weekStart: 1,
+      endDate: "<?= $current_date->format("d.m.Y") ?>",
+      startView: 2,
+      maxViewMode: 3,
+      autoclose: true
+    });
+    // Teilnehmer
     $('#datepicker-container .input-group.date').datepicker({
       format: "dd.mm.yyyy",
       weekStart: 1,
@@ -216,6 +277,24 @@
       maxViewMode: 3,
       autoclose: true
     });
+
+    // Hintergrundfarbe nach Status setzen
+    var status_colors = {
+      "i.A.": "lightgray",
+      "OK": "lightgreen",
+      "Alt": "orange"
+    }
+    function rowStyle(row) {
+      var css = {
+        "background-color": status_colors[row["status"]]
+      }
+      if(row["issue_forced"] == "1" & row["status"] == "OK") {
+        css["background-color"] = "lightblue";
+      }
+      return {
+        "css": css
+      }
+    }
   </script>
 </body>
 </html>
