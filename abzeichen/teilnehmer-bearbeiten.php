@@ -281,6 +281,11 @@
       autoclose: true
     });
 
+    // Detail-Funktion leitet zur Bearbeiten-Seite weiter
+    function detailFormatter(index, row) {
+      window.location.href = "<?= RELPATH ?>abzeichen/abzeichen-bearbeiten.php?id=" + row["id"];
+    }
+
     // Zeigt passendes Abzeichen-Symbol an
     var badge_styles = {
       "i.A.": "card-outline",

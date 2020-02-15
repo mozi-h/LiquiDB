@@ -1,6 +1,6 @@
 <?php
   /**
-   * HTML-Putzt eine Einage
+   * HTML-Putzt eine Eingabe
    * 
    * @param mixed $to_escape
    * 
