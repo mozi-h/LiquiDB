@@ -159,7 +159,7 @@
       </form>
     </div>
     <div class="card mb-3">
-      <div class="card-header mdi mdi-clipboard-outline">
+      <div class="card-header mdi mdi-clipboard-outline" id="disziplinen">
         Disziplinen
       </div>
       <div class="card-body">
@@ -185,14 +185,18 @@
                 ?>
               </select>
             </div>
-            <div id="datepicker-container" class="form-group col-md-6">
+            <div id="datepicker-container" class="form-group col-md-4">
               <label for="issue-date">Ausstelldatum</label>
               <div class="input-group date">
-                <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" value="<?= $current_date_formatted ?>">
+                <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" required value="<?= $current_date_formatted ?>">
                 <div class="input-group-append input-group-addon">
                   <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
                 </div>
               </div>
+            </div>
+            <div class="form-group col-md-2">
+              <label for="issue-date">Zeit</label>
+              <input type="time" class="form-control" name="time">
             </div>
           </div>
           <button type="submit" class="btn btn-success mdi mdi-clipboard-plus-outline">Absolviert</button>
@@ -368,6 +372,16 @@
       maxViewMode: 3,
       autoclose: true
     });
+
+    // Zeigt / versteckt den "Abzeichen wird bestätigt" Hinweis
+    function show_force_info(value) {
+      if(value) {
+        $("#force-info").removeClass("d-none");
+      }
+      else {
+        $("#force-info").addClass("d-none");
+      }
+    }
   </script>
 </body>
 </html>
