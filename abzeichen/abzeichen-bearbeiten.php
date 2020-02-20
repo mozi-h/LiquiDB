@@ -29,13 +29,15 @@
   // Heutiger Tag (Formatiert)
   $timezone = new DateTimeZone(TIMEZONE);
   $current_date = new DateTime("now", $timezone);
-  $current_date = $current_date->format("d.m.Y");
+  $current_date_formatted = $current_date->format("d.m.Y");
 
   // Liste der Disziplinen, die noch nicht eingeragen sind
   $query = sprintf(
-    "SELECT id, `name`, `type`
+    "SELECT id, `name`, `type`, auto_type
     FROM discipline_list
-    WHERE badge_name_internal = '%s'
+    WHERE auto_type != 'AGE'
+    AND auto_type != 'BADGE'
+    AND badge_name_internal = '%s'
     AND `id` NOT IN (
       SELECT `discipline_list_id`
       FROM discipline
@@ -119,7 +121,7 @@
             if($badge["status"] != "OLD" & ($badge["issue_forced"] ?? 1) == 1) {
               // Nicht ausgestellt oder gesetzt: Ausstelldatum veränderbar
               ?>
-              <div id="datepicker-badge-container" class="form-group col-md-5">
+              <div id="datepicker-container" class="form-group col-md-5">
                 <label for="issue-date">Ausstelldatum (setzen)</label>
                 <div class="input-group date">
                   <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" value="<?= $badge["issue_date_formatted"] ?>" oninput="show_force_info(this.value)">
@@ -157,7 +159,7 @@
       </form>
     </div>
     <div class="card mb-3">
-      <div class="card-header mdi mdi-clipboard-outline">
+      <div class="card-header mdi mdi-clipboard-outline" id="disziplinen">
         Disziplinen
       </div>
       <div class="card-body">
@@ -183,28 +185,35 @@
                 ?>
               </select>
             </div>
-            <div id="datepicker-container" class="form-group col-md-6">
+            <div id="datepicker-container" class="form-group col-md-4">
               <label for="issue-date">Ausstelldatum</label>
               <div class="input-group date">
-                <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" value="<?= $current_date ?>">
+                <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" required value="<?= $current_date_formatted ?>">
                 <div class="input-group-append input-group-addon">
                   <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
                 </div>
               </div>
             </div>
+            <div class="form-group col-md-2">
+              <label for="issue-date">Zeit</label>
+              <input type="time" class="form-control" name="time">
+            </div>
           </div>
           <button type="submit" class="btn btn-success mdi mdi-clipboard-plus-outline">Absolviert</button>
         </form>
         <hr>
-        <table class="table text-center">
+        <table class="table text-center table-hover bg-light">
             <thead class="thead-dark">
-              <th></th>
-              <th>Disziplin</th>
-              <th>Absolviert</th>
-              <th>Zusatz</th>
+              <tr>
+                <th></th>
+                <th>Disziplin</th>
+                <th>Absolviert</th>
+                <th>Zusatz</th>
+              </tr>
             </thead>
             <tbody>
               <?php
+                $hinder_issue = False;
                 $header_rows = $discipline_list_descriptions = [];
                 while($row = mysqli_fetch_array($disciplines)) {
                   if(!array_key_exists($row["type"], $header_rows)) {
@@ -221,25 +230,67 @@
                   ?>
                   <tr onclick="show_discipline_list_detail(<?= $row['id'] ?>)">
                     <?php
+                    $bg_color = "";
+                    // Ist die Disziplin gülig?
+                    switch ($row["auto_type"]) {
+                      case "NORMAL":
+                        // Darf nicht älter als 3 Monate sein
+                      case "TIME":
+                        // Darf nicht älter als 3 Monate sein
+                        // UND time nicht größer als auto_info (hier nicht überprüft; da eintragen nicht möglich)
+                        // (deswegen teilen sich NORMAl und TIME einen Case-Body)
+                        if($row["date"] == NULL) {
+                          $bg_color = "bg-warning";
+                          break;
+                        }
+                        $discipline_date = new DateTime($row["date"], $timezone);
+                        $discipline_date->add(new DateInterval("P1D"));
+                        $max_discipline_date = new DateTime("now", $timezone);;
+                        $max_discipline_date->sub(new DateInterval("P3M"));
+                        if($discipline_date <= $max_discipline_date) {
+                          $bg_color = "bg-warning";
+                        };
+                        break;
+                      case "AGE":
+                        // Teilnehmer muss mindestend auto_info Jahre alt sein
+                        // Blockiert Ausstellung
+                        if($participant["age"] < $row["auto_info"]) {
+                          $bg_color = "bg-danger";
+                          $hinder_issue = True;
+                        }
+                        break;
+                      case "BADGE":
+                        // Teilnehmer muss ein gültiges auto_info Abzeichen haben
+                        // Blockiert Ausstellung
+                        $query = sprintf(
+                          "SELECT 1 FROM badge WHERE participant_id = %d AND badge_name_internal = '%s' AND `status` = 'OK'",
+                          $participant["id"],
+                          $row["auto_info"]
+                        );
+                        if(mysqli_fetch_array(mysqli_query($db, $query))[0] != 1) {
+                          $bg_color = "bg-danger";
+                          $hinder_issue = True;
+                        }
+                        break;
+                      case "DOCUMENT":
+                        // Das Dokument darf maximal auto_info Jahre in der Vergangenheit ausgestellt worden sein
+                        if($row["date"] == NULL) {
+                          $bg_color = "bg-warning";
+                          break;
+                        }
+                        $document_date = new DateTime($row["date"], $timezone);
+                        $document_date->add(new DateInterval("P1D"));
+                        $max_document_date = new DateTime("now", $timezone);;
+                        $max_document_date->sub(new DateInterval("P" . $row["auto_info"] . "Y"));
+                        if($document_date <= $max_document_date) {
+                          $bg_color = "bg-warning";
+                        };
+                        break;
+                      default:
+                        die("Kein bekannter auto_type");
+                    }
+
                     if($row["discipline_id"]) {
-                      // Ist die Disziplin gülig?
-                      switch ($row["auto_type"]) {
-                        case "NORMAL":
-                          // Darf nicht älter als 3 Monate sein
-                          break;
-                        case "TIME":
-                          // Darf nicht älter als 3 Monate sein
-                          // UND time nicht größer als auto_info
-                          break;
-                        case "AGE":
-                          break;
-                        case "BADGE":
-                          break;
-                        case "DOCUMENT":
-                          break;
-                        default:
-                          die("Kein bekannter auto_type");
-                      }
                       // Bearbeiten / Löschen Knöpfe anzeigen
                       ?>
                       <td class="text-left"><a class="btn-sm btn-danger mdi mdi-trash-can" href="<?= RELPATH ?>abzeichen/disziplin-löschen-senden.php?id=<?= $row["discipline_id"] ?>"></a></td>
@@ -250,16 +301,18 @@
                       <td></td>
                       <?php
                     }
+                    
                     ?>
                     <td><?= $row["name"] ?></td>
-                    <td><?= $row["date_formatted"] ?? "" ?></td>
-                    <td><?= $row["time_formatted"] ?? "" ?></td>
+                    <td class="<?= $bg_color ?>"><?= $row["date_formatted"] ?? "" ?></td>
+                    <td><?= $row["time_formatted"] ?? "" ?><?php if($row["auto_type"]=="AGE") echo $participant["age"] ?></td>
                   </tr>
                   <?php
                 }
               ?>
             </tbody>
         </table>
+        <button class="btn btn-success" <?php if($hinder_issue) echo "disabled" ?>>Ausstellen</button>
         <div class="alert alert-info mdi mdi-information-outline mt-1" role="alert">
           Klicke auf eine Disziplin, um dessen Beschreibung anzuzeigen.
         </div>
@@ -314,11 +367,21 @@
     $('#datepicker-container .input-group.date').datepicker({
       format: "dd.mm.yyyy",
       weekStart: 1,
-      endDate: "<?= $current_date ?>",
+      endDate: "<?= $current_date_formatted ?>",
       startView: 2,
       maxViewMode: 3,
       autoclose: true
     });
+
+    // Zeigt / versteckt den "Abzeichen wird bestätigt" Hinweis
+    function show_force_info(value) {
+      if(value) {
+        $("#force-info").removeClass("d-none");
+      }
+      else {
+        $("#force-info").addClass("d-none");
+      }
+    }
   </script>
 </body>
 </html>
