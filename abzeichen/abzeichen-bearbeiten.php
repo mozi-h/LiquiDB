@@ -54,7 +54,7 @@
     "SELECT *, DATE_FORMAT(`date`, '%%d.%%m.%%Y') AS date_formatted
     FROM discipline_list AS d_l
     LEFT JOIN (
-      SELECT id AS discipline_id, discipline_list_id, `date`, `time`, CONCAT(FLOOR(`time`/60), ':', MOD(`time`, 60)) AS time_formatted
+      SELECT id AS discipline_id, discipline_list_id, `date`, `time`, CONCAT(FLOOR(`time`/60), ':', IF(LENGTH(MOD(`time`, 60)) = 1, CONCAT('0', MOD(`time`, 60)), MOD(`time`, 60))) AS time_formatted
       FROM discipline
       WHERE badge_id = %d
     ) AS d ON d_l.id = d.discipline_list_id
@@ -362,8 +362,36 @@
         <?php
       }
     ?>
+    <div class="card mb-3">
+      <div class="card-header">
+        Gefahrenbereich
+      </div>
+      <div class="card-body">
+        <button class="btn btn-danger" data-toggle="modal" data-target="#discipline_delete">Abzeichen löschen</button>
+      </div>
+    </div>
   </div>
 
+  <!-- Modal für Disziplin löschen -->
+  <div class="modal fade" id="discipline_delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="discipline_delete">Achtung</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Die Disziplinen und das Abzeichen werden unwiderruflich gelöscht. Wirklich Fortfahren?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+          <a class="btn btn-danger" href="<?= RELPATH ?>abzeichen/abzeichen-löschen.php?id=<?= $_GET["id"] ?>">Löschen</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Modal für Disziplin-Details (wechselt Inhalt) -->
   <div class="modal fade" id="discipline_detail" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
