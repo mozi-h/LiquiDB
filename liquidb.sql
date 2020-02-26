@@ -84,22 +84,17 @@ CREATE TABLE IF NOT EXISTS `badge` (
   CONSTRAINT `FK_badge_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`),
   CONSTRAINT `FK_badge_participant` FOREIGN KEY (`participant_id`) REFERENCES `participant` (`id`),
   CONSTRAINT `FK_badge_user` FOREIGN KEY (`issue_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.badge: ~11 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.badge: ~5 rows (ungefähr)
 /*!40000 ALTER TABLE `badge` DISABLE KEYS */;
 INSERT INTO `badge` (`id`, `participant_id`, `badge_name_internal`, `issue_date`, `issue_forced`, `issue_user_id`) VALUES
-	(3, 10, 'DRSA_BRONZE', '2020-02-12', 1, NULL),
 	(4, 8, 'DSA_SILBER', '2020-02-12', 0, NULL),
 	(5, 52, 'FRUEHSCHWIMMER', NULL, NULL, NULL),
 	(6, 62, 'DSA_BRONZE', '2018-01-20', 1, NULL),
 	(7, 62, 'DSA_BRONZE', '2020-01-08', 0, NULL),
 	(8, 62, 'JUNIORRETTER', '2022-11-23', 0, NULL),
-	(9, 10, 'DRSA_GOLD', '2016-05-28', 0, NULL),
-	(10, 10, 'DSTA', '2020-02-08', 1, 2),
-	(11, 10, 'DSTA', '2005-07-13', 1, 2),
-	(13, 10, 'DRSA_SILBER', NULL, NULL, NULL),
-	(14, 98, 'DSA_BRONZE', NULL, NULL, NULL);
+	(20, 10, 'DRSA_BRONZE', '2020-01-07', 1, 2);
 /*!40000 ALTER TABLE `badge` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.badge_list
@@ -139,12 +134,10 @@ CREATE TABLE IF NOT EXISTS `discipline` (
   KEY `FK_discipline_badge` (`badge_id`),
   CONSTRAINT `FK_discipline_badge` FOREIGN KEY (`badge_id`) REFERENCES `badge` (`id`),
   CONSTRAINT `FK_discipline_discipline_list` FOREIGN KEY (`discipline_list_id`) REFERENCES `discipline_list` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.discipline: ~1 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.discipline: ~0 rows (ungefähr)
 /*!40000 ALTER TABLE `discipline` DISABLE KEYS */;
-INSERT INTO `discipline` (`id`, `badge_id`, `discipline_list_id`, `date`, `time`) VALUES
-	(1, 13, 47, '2020-02-15', 840);
 /*!40000 ALTER TABLE `discipline` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.discipline_list
@@ -287,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   KEY `FK_participant_group` (`group_id`),
   CONSTRAINT `FK_participant_group` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`),
   CONSTRAINT `FK_participant_user` FOREIGN KEY (`added_by_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=113 DEFAULT CHARSET=utf8mb4;
 
 -- Exportiere Daten aus Tabelle liquidb.participant: ~106 rows (ungefähr)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
@@ -421,6 +414,25 @@ INSERT INTO `regulation` (`name_internal`, `date`, `name`, `name_short`, `descri
 CREATE TABLE `regulation_current` (
 	`name_internal` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci'
 ) ENGINE=MyISAM;
+
+-- Exportiere Struktur von Tabelle liquidb.statistics
+CREATE TABLE IF NOT EXISTS `statistics` (
+  `badge_name_internal` enum('FRUEHSCHWIMMER','DSA_BRONZE','DSA_SILBER','DSA_GOLD','JUNIORRETTER','DRSA_BRONZE','DRSA_SILBER','DRSA_GOLD','DSTA') NOT NULL,
+  `year` year(4) NOT NULL,
+  `amount` smallint(5) unsigned NOT NULL,
+  PRIMARY KEY (`badge_name_internal`,`year`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Anzahl der Abzeichen, die im Angegebenen Jahr ausgestellt wurden. Diese Angabe ist zusätzlich zu den Abzeichen in der Datenbank (hier werden z.B. gelöschte Abzeichen für die Statistik hinterlegt)';
+
+-- Exportiere Daten aus Tabelle liquidb.statistics: ~4 rows (ungefähr)
+/*!40000 ALTER TABLE `statistics` DISABLE KEYS */;
+INSERT INTO `statistics` (`badge_name_internal`, `year`, `amount`) VALUES
+	('DSA_BRONZE', '2014', 1),
+	('DRSA_BRONZE', '2020', 3),
+	('DRSA_SILBER', '2020', 7),
+	('DRSA_GOLD', '2020', 1),
+	('DSTA', '2005', 1),
+	('DSTA', '2020', 1);
+/*!40000 ALTER TABLE `statistics` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.test
 CREATE TABLE IF NOT EXISTS `test` (
