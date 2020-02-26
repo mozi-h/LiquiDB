@@ -367,27 +367,35 @@
         Gefahrenbereich
       </div>
       <div class="card-body">
-        <button class="btn btn-danger" data-toggle="modal" data-target="#discipline_delete">Abzeichen löschen</button>
+        <button class="btn btn-danger" data-toggle="modal" data-target="#badge_delete">Abzeichen löschen</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal für Disziplin löschen -->
-  <div class="modal fade" id="discipline_delete" tabindex="-1" role="dialog">
+  <!-- Modal für Abzeichen löschen -->
+  <div class="modal fade" id="badge_delete" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="discipline_delete">Achtung</h5>
+          <h5 class="modal-title" id="badge_delete">Achtung</h5>
           <button type="button" class="close" data-dismiss="modal">
             <span>&times;</span>
           </button>
         </div>
         <div class="modal-body">
           Die Disziplinen und das Abzeichen werden unwiderruflich gelöscht. Wirklich Fortfahren?
+          <hr>
+          <form action="<?= RELPATH ?>abzeichen/abzeichen-löschen-senden.php?id=<?= $_GET["id"] ?>" id="badge_delete_form" method="post">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="abzeichen_keine_statistik" id="abzeichen_keine_statistik" <?php if($badge["status"] == "WIP") {echo "checked disabled";} ?>>
+            <label class="custom-control-label" for="abzeichen_keine_statistik">Nicht in die Statistik eintragen</label>
+          </div>
+          <span class="text-muted">Markieren, wenn das Abzeichen versehentlich ausgestellt wurde. Das Abzeichen wird (sofern ausgestellt) anonym in die jeweilige Jahresstatistik eingetragen.</span>
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-          <a class="btn btn-danger" href="<?= RELPATH ?>abzeichen/abzeichen-löschen.php?id=<?= $_GET["id"] ?>">Löschen</a>
+          <button form="badge_delete_form" type="submit" class="btn btn-danger">Löschen</button>
         </div>
       </div>
     </div>
