@@ -166,7 +166,7 @@
               <div id="datepicker-badge-container" class="form-group col-md-6">
                 <label for="issue-date">Ausstelldatum (setzen)</label>
                 <div class="input-group date">
-                  <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" oninput="show_force_info(this.value)">
+                  <input type="text" class="form-control" name="issue-date" title="Datum im TT.MM.JJJJ Format" maxlen=10 placeholder="TT.MM.JJJJ" oninput="show_force_info(this.value)" onchange="show_force_info(this.value)">
                   <div class="input-group-append input-group-addon">
                     <button class="btn btn-secondary mdi mdi-calendar" type="button"></button>
                   </div>
