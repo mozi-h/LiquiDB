@@ -3,6 +3,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+<!--Favicon-->
+<link rel="shortcut icon" href="<?= RELPATH ?>img/favicon.png" type="image/png">
+
 <!--Bootstrap CSS-->
 <link rel="stylesheet" href="<?= RELPATH ?>vendor/bootstrap.min.css">
 <!--Bootstrap Datepicker CSS-->
