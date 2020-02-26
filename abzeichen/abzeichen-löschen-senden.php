@@ -37,7 +37,6 @@
   }
 
   // Abzeichen löschen
-  // Disziplinen löschen
   $query = sprintf(
     "DELETE FROM badge WHERE id = %d",
     $_GET["id"]
@@ -81,7 +80,7 @@
     // Senden
     if(!mysqli_query($db, $query)) {
       // Fehler beim Query
-      send_alert($target, "danger", "Fehler beim eintragen in die Statistik (Abzeichen gelöscht): " . escape(mysqli_error($db)) . "<br>Umbedingt manuell nachtragen: " . $badge["name"] . " in $issue_year ausgestellt.", True);
+      send_alert($target, "danger", "Fehler beim eintragen in die Statistik (Abzeichen gelöscht): " . escape(mysqli_error($db)) . "<br>Umbedingt manuell nachtragen: " . $badge["name_short"] . " in $issue_year ausgestellt.", True);
     }
     send_alert($target, "success", "Abzeichen gelöscht und in die Statistik übernommen (anonym)");
   }

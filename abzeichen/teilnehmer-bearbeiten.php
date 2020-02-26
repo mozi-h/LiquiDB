@@ -208,32 +208,66 @@
         </div>
       </div>
     </div>
-    <div class="card mb-2">
-      <a class="card-header mdi mdi-account-group-outline text-reset no-decoration" data-toggle="collapse" href="#anwesenheit">
-        Anwesenheit<span class="mdi mdi-menu-down"></span>
+    <div class="card mb-3">
+      <a class="card-header mdi mdi-account-group-outline">
+        Anwesenheit
       </a>
-      <div class="card-body collapse" id="anwesenheit">
-        <table id="data" class="table table-striped"
-          data-toggle="table"
-          data-url="<?= RELPATH ?>ajax/abzeichen/anwesenheitsliste_teilnehmer.php?id=<?= $_GET["id"] ?? "" ?>"
+      <table id="data" class="table table-striped"
+        data-toggle="table"
+        data-url="<?= RELPATH ?>ajax/abzeichen/anwesenheitsliste_teilnehmer.php?id=<?= $_GET["id"] ?? "" ?>"
 
-          data-locale="de-DE"
-          data-pagination="true"
-          data-show-extended-pagination="true"
-          data-show-fullscreen="true"
-          data-show-refresh="true"
-          data-search="true"
-          data-sort-name="group"
-          data-sort-order="asc">
-          <thead class="thead-dark">
-            <th data-field="date_formatted" data-sortable="true">Datum</th>
-            <th data-field="status" data-sortable="true">Status</th>
-          </thead>
-        </table>
+        data-locale="de-DE"
+        data-pagination="true"
+        data-show-extended-pagination="true"
+        data-show-fullscreen="true"
+        data-show-refresh="true"
+        data-search="true"
+        data-sort-name="group"
+        data-sort-order="asc">
+        <thead class="thead-dark">
+          <th data-field="date_formatted" data-sortable="true">Datum</th>
+          <th data-field="status" data-sortable="true">Status</th>
+        </thead>
+      </table>
+    </div>
+    <div class="card mb-3">
+      <div class="card-header">
+        Gefahrenbereich
+      </div>
+      <div class="card-body">
+        <button class="btn btn-danger" data-toggle="modal" data-target="#participant_delete">Teilnehmer löschen</button>
       </div>
     </div>
   </div>
-
+  
+  <!-- Modal für Teilnehmer löschen -->
+  <div class="modal fade" id="participant_delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="participant_delete">Achtung</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Der Teilnehmer und dessen Abzeichen werden unwiderruflich gelöscht. Wirklich Fortfahren?
+          <hr>
+          <form action="<?= RELPATH ?>abzeichen/teilnehmer-löschen-senden.php?id=<?= $_GET["id"] ?>" id="participant_delete_form" method="post">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" name="abzeichen_keine_statistik" id="abzeichen_keine_statistik">
+            <label class="custom-control-label" for="abzeichen_keine_statistik">Abzeichen nicht in die Statistik eintragen</label>
+          </div>
+          <span class="text-muted">Markieren, wenn der Teilnehmer und all seine Abzeichen versehentlich ausgestellt wurden. Abzeichen des Teilnehmers werden (sofern ausgestellt) anonym in die jeweilige Jahresstatistik eingetragen.</span>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+          <button form="participant_delete_form" type="submit" class="btn btn-danger">Löschen</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Schulden-begleichen modal -->
   <div class="modal fade" id="clearDebt" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
