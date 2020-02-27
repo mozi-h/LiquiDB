@@ -1,5 +1,9 @@
 <?php
   // ** Einstellungen ** //
+
+  /** Kosten des Eintritts in Euro (Punkt als Komma) */
+  define("ENTRANCE_FEE", 1.50);
+
   /** MySQL Datenbank Hostname */
   define("DB_HOST", "localhost");
 

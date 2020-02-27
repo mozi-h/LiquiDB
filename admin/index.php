@@ -19,6 +19,11 @@
   $query = "SELECT COUNT(1) FROM user WHERE ist_admin = 1;";
   $result = mysqli_query($db, $query);
   $anzahl_admins = mysqli_fetch_array($result)[0];
+
+  // Anzahl der Gruppen
+  $query = "SELECT COUNT(1) FROM `group`;";
+  $result = mysqli_query($db, $query);
+  $anzahl_gruppen = mysqli_fetch_array($result)[0];
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -33,8 +38,7 @@
     <h1 class="text-info display-4 text-center mdi mdi-shield-account">Admin Dashboard</h1>
 
     <?= catch_alert() ?>
-    <div class="card">
-      
+    <div class="card mb-3">
       <div class="mdi mdi-account card-header">
         Benutzer Verwalten
       </div>
@@ -46,6 +50,16 @@
         </ul>
         <a class="btn btn-outline-primary mdi mdi-account-multiple" href="nutzer.php">Auflisten</a>
         <a class="btn btn-outline-success mdi mdi-account-plus" href="nutzer-neu.php">Hinzufügen</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mdi mdi-account-box-multiple-outline card-header">
+        Gruppen Verwalten
+      </div>
+      <div class="card-body align-content-between">
+        <p class=""><?= $anzahl_gruppen ?> <?= get_quantity($anzahl_gruppen, "Gruppe", "Gruppen") ?></p>
+        <a class="btn btn-outline-primary" href="gruppe.php">Auflisten</a>
+        <a class="btn btn-outline-success" href="gruppe-neu.php">Hinzufügen</a>
       </div>
     </div>
   </div>

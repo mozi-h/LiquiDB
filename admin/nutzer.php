@@ -3,15 +3,11 @@
   set_relpath(1);
 
   restricted("Admin");
-
-  // BENUTZERDATEN
-  $query = "SELECT * FROM user;";
-  $benutzerdaten_result = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <?= get_head() ?>
+  <?= get_head(true) ?>
   
   <title>Benutzer | LiquiDB</title>
 </head>
@@ -21,59 +17,39 @@
     <h1 class="text-info display-4 text-center mdi mdi-account">Benutzer</h1>
 
     <?= catch_alert() ?>
-    <table class="table table-striped text-center" id="datatable">
-      <thead class="">
-        <th></th>
-        <th>Nutzername</th>
-        <th>Name</th>
-        <th class="hint" data-toggle="tooltip" data-placement="top" title="Trainer">T</th>
-        <th class="hint" data-toggle="tooltip" data-placement="top" title="Admin">A</th>
-      </thead>
-      <tbody>
-        <?php
-          // BENUTZERDATEN AUSGEBEN
+    <table id="data" class="table table-striped"
+      data-toggle="table"
+      data-url="<?= RELPATH ?>ajax/admin/nutzer.php"
 
-          while($row = mysqli_fetch_array($benutzerdaten_result)) {
-            ?>
-            <tr>
-              <td><a href="nutzer-bearbeiten.php?id=<?= $row["id"] ?>" class="btn btn-primary mdi mdi-account-edit"></a></td>
-              <td><?= escape($row["username"]) ?></td>
-              <td><?= escape($row["name"]) ?? "<em>Leer</em>" ?></td>
-              <td><span class="<?= ["mdi mdi-checkbox-blank-outline text-danger", "mdi mdi-checkbox-marked-outline text-success"][$row["ist_trainer"]] ?>"></span></td>
-              <td><span class="<?= ["mdi mdi-checkbox-blank-outline text-danger", "mdi mdi-checkbox-marked-outline text-success"][$row["ist_admin"]] ?>"></span></td>
-            </tr>
-            <?php
-          }
-        ?>
-      </tbody>
+      data-locale="de-DE"
+      data-pagination="true"
+      data-show-extended-pagination="true"
+      data-show-fullscreen="true"
+      data-show-refresh="true"
+      data-search="true"
+      data-sort-name="username"
+      data-sort-order="asc"
+      data-detail-view="false"
+      data-detail-view-by-click="true"
+      data-detail-formatter="detailFormatter">
+      <thead class="thead-dark">
+        <th data-field="username" data-sortable="true">Username</th>
+        <th class="d-none d-md-table-cell" data-field="name" data-sortable="false">Name</th>
+        <th class ="text-center" data-field="ist_trainer" data-sortable="true"><span class="mdi mdi-account-star"></span>Trainer</th>
+        <th class="d-none d-sm-table-cell text-center" data-field="ist_admin" data-sortable="true"><span class="mdi mdi-shield-account"></span>Admin</th>
+      </thead>
     </table>
+    <div class="alert alert-info mdi mdi-account-edit mt-1" role="alert">
+      Klicke auf einen Benutzer, um diesen zu bearbeiten
+    </div>
   </div>
   
-  <?= get_foot() ?>
+  <?= get_foot(True) ?>
   <script>
-    // Tooltips aktivieren
-    $(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-
-    // DataTable aktivieren
-    $(document).ready(function() {
-      $('#datatable').DataTable( {
-        "language": {
-          url: "<?= RELPATH ?>js/DataTables/german.json"
-        },
-        "order": [
-          [1, "asc"]
-        ],
-        "columns": [
-          {orderable: false},
-          null,
-          null,
-          null,
-          null
-        ]
-      });
-    });
+    // Detail-Funktion leitet zur Bearbeiten-Seite weiter
+    function detailFormatter(index, row) {
+      window.location.href = "<?= RELPATH ?>admin/nutzer-bearbeiten.php?id=" + row["id"];
+    }
   </script>
 </body>
 </html>

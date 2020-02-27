@@ -54,6 +54,15 @@
             <li class="mdi mdi-clipboard-check">Disziplin (fertig)</li>
             <li class="mdi mdi-clipboard-alert-outline">Disziplin (abgelaufen)</li>
           </ul>
+          <li class="mdi mdi-cash-register">Eintritt</li>
+          <ul>
+            <li class="mdi mdi-cash-multiple">Bezahlt</li>
+            <li class="mdi mdi-cash-remove">Nicht Bezahlt</li>
+            <li class="mdi mdi-cash-plus">Bezahlen</li>
+            <li class="mdi mdi-cash-minus">Bezahlen rückgängig</li>
+            <hr>
+            <li class="mdi mdi-account-group-outline">Anwesend</li>
+          </ul>
         </ul>
       </div>
     </div>

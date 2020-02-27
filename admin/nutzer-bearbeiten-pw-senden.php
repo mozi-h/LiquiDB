@@ -64,7 +64,7 @@
   $pw_hash = hash_password($salt, $_POST["pw"]);
 
   $query = sprintf(
-    "UPDATE user SET salt = '%s', pw_hash = '%s', pw_changed = NOW(), pw_must_change = 1 WHERE id = %d",
+    "UPDATE user SET salt = '%s', pw_hash_bin = UNHEX('%s'), pw_changed = NOW(), pw_must_change = 1 WHERE id = %d",
     mysqli_real_escape_string($db, $salt),
     $pw_hash,
     $user["id"]

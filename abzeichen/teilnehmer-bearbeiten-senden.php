@@ -43,12 +43,16 @@
   // Name valid
 
   // Geschlecht validieren
-  // - nicht gegeben
+  // - nicht gegeben / "remove"
   // ODER
   // - m, w oder d
   $_POST["gender"] = trim($_POST["gender"] ?? "");
   if(empty($_POST["gender"])) {
     // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["gender"]);
+  }
+  elseif($_POST["gender"] == "remove") {
+    // Soll entfernt (NULL) werden
     unset($_POST["gender"]);
   }
   elseif(!preg_match("/^[mwd]$/", $_POST["gender"])) {
@@ -97,6 +101,34 @@
     send_alert($target, "warning", "Geburtsort zu lang (max 50 Zeichen)");
   }
   // Geburtsort valid
+
+  // Gruppe validieren
+  // - nicht gegeben / "remove"
+  // ODER
+  // - Int
+  // - existierende Gruppen-ID
+  $_POST["group"] = trim($_POST["group"] ?? "");
+  if(empty($_POST["group"])) {
+    // Nicht gegeben oder nur Leerzeichen
+    unset($_POST["group"]);
+  }
+  elseif($_POST["group"] == "remove") {
+    // Soll entfernt (NULL) werden
+    unset($_POST["group"]);
+  }
+  elseif(!filter_var($_POST["group"], FILTER_VALIDATE_INT)) {
+    // Kein Int
+    send_alert($target, "warning", "Gruppe ist kein Int");
+  }
+  else {
+    $_POST["group"] = intval($_POST["group"]);
+    $query = "SELECT 1 FROM `group` WHERE id = " . $_POST["group"];
+    $result = mysqli_query($db, $query);
+    if(mysqli_fetch_row($result)[0] != 1) {
+      send_alert($target, "warning", "Gruppe existiert nicht");
+    }
+  }
+  // Gruppe valid
 
   // Adresse validieren
   // Nicht gegeben
@@ -164,11 +196,12 @@
 
   // Eintrag in der Datenbank aktualisieren
   $query = sprintf(
-    "UPDATE participant SET name = '%s', gender = %s, birthday = %s, birthplace = %s, address = %s, post_code = %s, city = %s, note = %s WHERE id = %d",
+    "UPDATE participant SET name = '%s', gender = %s, birthday = %s, birthplace = %s, group_id = %s, address = %s, post_code = %s, city = %s, note = %s WHERE id = %d",
     mysqli_real_escape_string($db, $_POST["name"]),
     mysql_escape_or_null($_POST["gender"] ?? NULL),
     mysql_escape_or_null($_POST["birthday"] ?? NULL),
     mysql_escape_or_null($_POST["birthplace"] ?? NULL),
+    ($_POST["group"] ?? "NULL"),
     mysql_escape_or_null($_POST["address"] ?? NULL),
     mysql_escape_or_null($_POST["post_code"] ?? NULL),
     mysql_escape_or_null($_POST["city"] ?? NULL),

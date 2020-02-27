@@ -4,6 +4,9 @@
 
   restricted("Trainer");
 
+  // Datum
+  $current_year = date("Y");
+
   // STATISTIK
   // Anzahl der Teilnehmer
   $query = "SELECT COUNT(1) FROM participant;";
@@ -14,6 +17,19 @@
   $query = "SELECT COUNT(1) FROM badge;";
   $result = mysqli_query($db, $query);
   $anzahl_abzeichen = mysqli_fetch_array($result)[0];
+
+  // Ausgestellte Abzeichen im derzeitigen Jahr
+  $query = sprintf(
+    "SELECT IF((SELECT SUM(amount) FROM statistics WHERE `year` = %d) IS NULL, 0, (SELECT SUM(amount) FROM statistics WHERE `year` = %d))
+    + IF((SELECT COUNT(1) FROM badge WHERE `status` != 'WIP' AND YEAR(issue_date) = %d) IS NULL, 0, (SELECT COUNT(1) FROM badge WHERE `status` != 'WIP' AND YEAR(issue_date) = %d))
+    AS total_year_badges",
+    $current_year,
+    $current_year,
+    $current_year,
+    $current_year
+    );
+  $result = mysqli_query($db, $query);
+  $anzahl_abzeichen_current_year = mysqli_fetch_array($result)[0];
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -46,8 +62,8 @@
       </div>
       <div class="card-body align-content-between">
         <p><?= number_format($anzahl_abzeichen, 0, ",", ".") ?> Abzeichen</p>
+        <p><?= number_format($anzahl_abzeichen_current_year, 0, ",", ".") ?> Abzeichen in <?= $current_year ?> Ausgestellt</p>
         <a class="btn btn-outline-primary mdi mdi-cards-outline" href="abzeichen.php">Auflisten</a>
-        <a class="btn btn-outline-success mdi mdi-card-plus-outline" href="abzeichen-neu.php">Abzeichen anlegen</a>
       </div>
     </div>
   </div>

@@ -6,14 +6,16 @@
   restricted("Trainer");
 
   // TEILNEHMERDATEN
-  $query = "SELECT p.id, p.name, p.gender, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note
-            FROM participant AS p";
+  $query = "SELECT p.id, g.name AS group_name, p.name, p.gender, DATE_FORMAT(p.birthday, '%d.%m.%Y') AS birthday_formatted, p.age, p.birthplace, p.`address`, p.post_code, p.city, p.note
+            FROM participant AS p
+            LEFT JOIN `group` AS g ON p.group_id = g.id";
             $result = mysqli_query($db, $query);
 
   $output = [];
   while($row = mysqli_fetch_array($result)) {
     $tmp = [];
     $tmp["id"] = $row["id"];
+    $tmp["group"] = escape($row["group_name"]) ?? "";
     $tmp["name"] = escape($row["name"]);
     $tmp["gender"] = $row["gender"];
     $tmp["birthday"] = escape($row["birthday_formatted"]) ?? "";
