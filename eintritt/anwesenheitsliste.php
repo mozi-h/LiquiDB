@@ -48,7 +48,7 @@
 <body>
   <?= get_nav("eintritt") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-details">Anwesenheitsliste</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-details-outline">Anwesenheitsliste</h1>
     <?= catch_alert() ?>
     <div class="card">
       <div class="mdi mdi-account-group-outline card-header">
