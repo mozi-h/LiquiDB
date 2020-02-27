@@ -1,5 +1,5 @@
 -- --------------------------------------------------------
--- Host:                         192.168.178.43
+-- Host:                         mozi-h.hopto.org
 -- Server Version:               10.3.17-MariaDB-0+deb10u1 - Raspbian 10
 -- Server Betriebssystem:        debian-linux-gnueabihf
 -- HeidiSQL Version:             10.3.0.5771
@@ -20,7 +20,6 @@ USE `liquidb`;
 CREATE TABLE IF NOT EXISTS `attendance` (
   `date` date NOT NULL DEFAULT cast(current_timestamp() as date),
   `participant_id` int(10) unsigned NOT NULL,
-  `other_amount` tinyint(3) unsigned DEFAULT NULL,
   `paid` enum('Yes','No','Other') NOT NULL COMMENT 'Yes: gezahlt\r\nNo: nicht gezahlen / muss nicht zahlen\r\nOther: andere Regelung (z.B. Jahreskarte)',
   `author_user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`date`,`participant_id`),
@@ -32,33 +31,33 @@ CREATE TABLE IF NOT EXISTS `attendance` (
 
 -- Exportiere Daten aus Tabelle liquidb.attendance: ~26 rows (ungefähr)
 /*!40000 ALTER TABLE `attendance` DISABLE KEYS */;
-INSERT INTO `attendance` (`date`, `participant_id`, `other_amount`, `paid`, `author_user_id`) VALUES
-	('2020-01-20', 10, NULL, 'Yes', 1),
-	('2020-01-21', 1, NULL, 'Other', 2),
-	('2020-01-21', 4, NULL, 'Yes', 2),
-	('2020-01-21', 6, NULL, 'Yes', 2),
-	('2020-01-21', 8, NULL, 'Yes', 2),
-	('2020-01-21', 9, NULL, 'Yes', 2),
-	('2020-01-21', 10, NULL, 'Yes', 1),
-	('2020-01-21', 22, NULL, 'Other', 2),
-	('2020-01-23', 10, NULL, 'Other', 2),
-	('2020-01-23', 51, NULL, 'Yes', 2),
-	('2020-01-24', 103, NULL, 'Yes', 2),
-	('2020-01-24', 105, NULL, 'Yes', 2),
-	('2020-01-26', 10, NULL, 'Yes', 2),
-	('2020-01-29', 4, NULL, 'Other', 2),
-	('2020-01-29', 8, NULL, 'Yes', 4),
-	('2020-01-29', 10, NULL, 'Yes', 2),
-	('2020-01-29', 25, NULL, 'Other', 4),
-	('2020-01-29', 50, NULL, 'No', 4),
-	('2020-01-29', 51, NULL, 'Yes', 2),
-	('2020-01-29', 52, NULL, 'No', 2),
-	('2020-01-29', 59, NULL, 'Yes', 2),
-	('2020-01-29', 79, NULL, 'Other', 4),
-	('2020-01-29', 95, NULL, 'Yes', 2),
-	('2020-01-29', 103, NULL, 'Other', 4),
-	('2020-02-13', 74, NULL, 'Yes', 2),
-	('2020-02-13', 98, NULL, 'Yes', 2);
+INSERT INTO `attendance` (`date`, `participant_id`, `paid`, `author_user_id`) VALUES
+	('2020-01-20', 10, 'Yes', 1),
+	('2020-01-21', 1, 'Other', 2),
+	('2020-01-21', 4, 'Yes', 2),
+	('2020-01-21', 6, 'Yes', 2),
+	('2020-01-21', 8, 'Yes', 2),
+	('2020-01-21', 9, 'Yes', 2),
+	('2020-01-21', 10, 'Yes', 1),
+	('2020-01-21', 22, 'Other', 2),
+	('2020-01-23', 10, 'Other', 2),
+	('2020-01-23', 51, 'Yes', 2),
+	('2020-01-24', 103, 'Yes', 2),
+	('2020-01-24', 105, 'Yes', 2),
+	('2020-01-26', 10, 'Yes', 2),
+	('2020-01-29', 4, 'Other', 2),
+	('2020-01-29', 8, 'Yes', 4),
+	('2020-01-29', 10, 'Yes', 2),
+	('2020-01-29', 25, 'Other', 4),
+	('2020-01-29', 50, 'No', 4),
+	('2020-01-29', 51, 'Yes', 2),
+	('2020-01-29', 52, 'No', 2),
+	('2020-01-29', 59, 'Yes', 2),
+	('2020-01-29', 79, 'Other', 4),
+	('2020-01-29', 95, 'Yes', 2),
+	('2020-01-29', 103, 'Other', 4),
+	('2020-02-13', 74, 'Yes', 2),
+	('2020-02-13', 98, 'Yes', 2);
 /*!40000 ALTER TABLE `attendance` ENABLE KEYS */;
 
 -- Exportiere Struktur von View liquidb.attendance_today_not
@@ -84,9 +83,9 @@ CREATE TABLE IF NOT EXISTS `badge` (
   CONSTRAINT `FK_badge_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`),
   CONSTRAINT `FK_badge_participant` FOREIGN KEY (`participant_id`) REFERENCES `participant` (`id`),
   CONSTRAINT `FK_badge_user` FOREIGN KEY (`issue_user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4;
 
--- Exportiere Daten aus Tabelle liquidb.badge: ~5 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.badge: ~6 rows (ungefähr)
 /*!40000 ALTER TABLE `badge` DISABLE KEYS */;
 INSERT INTO `badge` (`id`, `participant_id`, `badge_name_internal`, `issue_date`, `issue_forced`, `issue_user_id`) VALUES
 	(4, 8, 'DSA_SILBER', '2020-02-12', 0, NULL),
@@ -420,10 +419,11 @@ CREATE TABLE IF NOT EXISTS `statistics` (
   `badge_name_internal` enum('FRUEHSCHWIMMER','DSA_BRONZE','DSA_SILBER','DSA_GOLD','JUNIORRETTER','DRSA_BRONZE','DRSA_SILBER','DRSA_GOLD','DSTA') NOT NULL,
   `year` year(4) NOT NULL,
   `amount` smallint(5) unsigned NOT NULL,
-  PRIMARY KEY (`badge_name_internal`,`year`)
+  PRIMARY KEY (`badge_name_internal`,`year`),
+  CONSTRAINT `FK_statistics_badge_list` FOREIGN KEY (`badge_name_internal`) REFERENCES `badge_list` (`name_internal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Anzahl der Abzeichen, die im Angegebenen Jahr ausgestellt wurden. Diese Angabe ist zusätzlich zu den Abzeichen in der Datenbank (hier werden z.B. gelöschte Abzeichen für die Statistik hinterlegt)';
 
--- Exportiere Daten aus Tabelle liquidb.statistics: ~4 rows (ungefähr)
+-- Exportiere Daten aus Tabelle liquidb.statistics: ~6 rows (ungefähr)
 /*!40000 ALTER TABLE `statistics` DISABLE KEYS */;
 INSERT INTO `statistics` (`badge_name_internal`, `year`, `amount`) VALUES
 	('DSA_BRONZE', '2014', 1),
@@ -433,24 +433,6 @@ INSERT INTO `statistics` (`badge_name_internal`, `year`, `amount`) VALUES
 	('DSTA', '2005', 1),
 	('DSTA', '2020', 1);
 /*!40000 ALTER TABLE `statistics` ENABLE KEYS */;
-
--- Exportiere Struktur von Tabelle liquidb.test
-CREATE TABLE IF NOT EXISTS `test` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `person` int(11) NOT NULL DEFAULT 0,
-  `branch` enum('A','B') NOT NULL DEFAULT 'A',
-  `date` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
-
--- Exportiere Daten aus Tabelle liquidb.test: ~4 rows (ungefähr)
-/*!40000 ALTER TABLE `test` DISABLE KEYS */;
-INSERT INTO `test` (`id`, `person`, `branch`, `date`) VALUES
-	(1, 1, 'A', '2020-02-12'),
-	(2, 0, 'A', '2019-09-22'),
-	(3, 1, 'B', '2017-10-06'),
-	(4, 1, 'A', '2023-08-13');
-/*!40000 ALTER TABLE `test` ENABLE KEYS */;
 
 -- Exportiere Struktur von Tabelle liquidb.user
 CREATE TABLE IF NOT EXISTS `user` (
