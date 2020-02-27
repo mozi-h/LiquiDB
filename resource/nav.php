@@ -10,10 +10,10 @@
       <a class="nav-link <?= $tab["index"] ?? "" ?>" href="<?= RELPATH ?>index.php">Home</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link <?= $tab["vorlage"] ?? "" ?>" href="<?= RELPATH ?>resource/vorlage.php">Vorlage</a>
+      <a class="nav-link <?= $tab["a-infos"] ?? "" ?>" href="<?= RELPATH ?>resource/abzeichen-infos.php">Infos</a>
     </li>
     <!--li class="nav-item">
-      <a class="nav-link disabled" href="#">Disabled</a>
+      <a class="nav-link <?= $tab["vorlage"] ?? "" ?>" href="<?= RELPATH ?>resource/vorlage.php">Vorlage</a>
     </li-->
     <?php
       if(isset($_SESSION["USER"])) {
