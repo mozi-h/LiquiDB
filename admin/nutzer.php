@@ -39,8 +39,8 @@
         <th class="d-none d-sm-table-cell text-center" data-field="ist_admin" data-sortable="true"><span class="mdi mdi-shield-account"></span>Admin</th>
       </thead>
     </table>
-    <div class="alert alert-info mdi mdi-account-edit-outline mt-1" role="alert">
-      Klicke auf einen Nutzer, um diesen zu bearbeiten
+    <div class="alert alert-info mdi mdi-account-edit mt-1" role="alert">
+      Klicke auf einen Benutzer, um diesen zu bearbeiten
     </div>
   </div>
   

@@ -34,7 +34,7 @@
 <body>
   <?= get_nav("admin") ?>
   <div class="container">
-    <h1 class="text-info display-4 text-center mdi mdi-account-edit">Nutzer bearbeiten</h1>
+    <h1 class="text-info display-4 text-center mdi mdi-account-edit">Benutzer bearbeiten</h1>
 
     <?= catch_alert() ?>
     <div class="card mb-3">

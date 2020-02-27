@@ -64,7 +64,6 @@
         <p><?= number_format($anzahl_abzeichen, 0, ",", ".") ?> Abzeichen</p>
         <p><?= number_format($anzahl_abzeichen_current_year, 0, ",", ".") ?> Abzeichen in <?= $current_year ?> Ausgestellt</p>
         <a class="btn btn-outline-primary mdi mdi-cards-outline" href="abzeichen.php">Auflisten</a>
-        <a class="btn btn-outline-success mdi mdi-card-plus-outline" href="abzeichen-neu.php">Abzeichen anlegen</a>
       </div>
     </div>
   </div>
